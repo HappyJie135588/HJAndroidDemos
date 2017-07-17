@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_rxjava_demo"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.huangjie.hjandroiddemos.rxjavademo.RxjavaDemoActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/test1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="异步"
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/test2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rxjava"
+            android:textAllCaps="false"/>
+
+        <TextView
+            android:id="@+id/tv2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/test3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Just+Action"
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/test4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="链式写法"
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/test5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="lambda表达式"
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/test6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="map表达式"
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/test7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="lambda的map表达式"
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/test8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="map表达式改变返回类型"
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/test9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="lambda+map表达式改变返回类型"
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/test10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="from表达式接收集合或数组每次输出一个参数给subscriber"
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/test11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FlatMap表达式"
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/test12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Filter表达式"
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/test13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Take和doOnNext表达式"
+            android:textAllCaps="false"/>
+    </LinearLayout>
+</ScrollView>
