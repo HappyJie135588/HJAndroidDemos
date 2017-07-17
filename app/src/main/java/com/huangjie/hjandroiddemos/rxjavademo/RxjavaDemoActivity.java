@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.huangjie.hjandroiddemos.BaseActivity;
 import com.huangjie.hjandroiddemos.R;
+import com.huangjie.hjandroiddemos.utils.UIUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,10 +18,15 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 public class RxjavaDemoActivity extends BaseActivity {
     @BindView(R.id.tv2)
@@ -172,5 +179,30 @@ public class RxjavaDemoActivity extends BaseActivity {
                 loggerHJ.d("doOnNext " + s);
             }
         }).subscribe(s -> loggerHJ.d("flatMap " + s));
+    }
+
+    @OnClick(R.id.test14)
+    public void test14() {
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://v.juhe.cn/weather/").addConverterFactory(GsonConverterFactory.create()).addCallAdapterFactory(RxJavaCallAdapterFactory.create()).build();
+        Weather                 weather    = retrofit.create(Weather.class);
+        Observable<WeatherBean> observable = weather.getWeather("成都", "json", 1, "9c3be48c5a14be9130c3c9af4b87f551");
+        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<WeatherBean>() {
+            @Override
+            public void onCompleted() {
+                loggerHJ.d("onCompleted");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                loggerHJ.d(e.getMessage());
+            }
+
+            @Override
+            public void onNext(WeatherBean weatherBean) {
+                loggerHJ.d(weatherBean.toString());
+                Toast.makeText(UIUtils.getContext(), weatherBean.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 }

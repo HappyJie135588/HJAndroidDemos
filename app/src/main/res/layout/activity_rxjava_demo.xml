@@ -108,5 +108,11 @@
             android:layout_height="wrap_content"
             android:text="Take和doOnNext表达式"
             android:textAllCaps="false"/>
+        <Button
+            android:id="@+id/test14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rxjava和Retrofit"
+            android:textAllCaps="false"/>
     </LinearLayout>
 </ScrollView>
