@@ -1,10 +1,11 @@
-package com.huangjie.hjandroiddemos.activity;
+package com.huangjie.hjandroiddemos;
 
 import android.os.Bundle;
 import android.widget.TextView;
 
 import com.huangjie.hjandroiddemos.BaseActivity;
 import com.huangjie.hjandroiddemos.R;
+import com.huangjie.hjandroiddemos.qqslidemenu.TestQQSlideMenuActivity;
 import com.huangjie.hjandroiddemos.rxjavademo.RxjavaDemoActivity;
 
 import butterknife.BindView;
@@ -38,5 +39,9 @@ public class MainActivity extends BaseActivity {
     @OnClick(R.id.btn_rxjava)
     public void btn_rxjava() {
         RxjavaDemoActivity.actionStart(this);
+    }
+    @OnClick(R.id.btn_qqslidemenu)
+    public void btn_qqslidemenu() {
+        TestQQSlideMenuActivity.actionStart(this);
     }
 }
