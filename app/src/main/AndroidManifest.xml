@@ -2,7 +2,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.huangjie.hjandroiddemos">
 
+    <!-- add by HJ begin -->
+    <!-- 访问网络权限 -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- 用于判断当前网络状态 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!-- 文件写权限 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <!-- 文件读权限 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <!-- 请求访问使用照相设备 -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <!-- 允许程序录制音频 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+
+    <!-- add by HJ end -->
 
     <application
         android:name=".BaseApplication"
@@ -18,10 +32,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".rxjavademo.RxjavaDemoActivity">
-        </activity>
-        <activity android:name=".qqslidemenu.TestQQSlideMenuActivity">
-        </activity>
+        <activity android:name=".rxjavademo.RxjavaDemoActivity"/>
+        <activity android:name=".qqslidemenu.TestQQSlideMenuActivity"/>
+        <activity android:name=".mediarecorddemo.RecordMp4"/>
     </application>
 
 </manifest>

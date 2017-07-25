@@ -5,6 +5,7 @@ import android.widget.TextView;
 
 import com.huangjie.hjandroiddemos.BaseActivity;
 import com.huangjie.hjandroiddemos.R;
+import com.huangjie.hjandroiddemos.mediarecorddemo.RecordMp4;
 import com.huangjie.hjandroiddemos.qqslidemenu.TestQQSlideMenuActivity;
 import com.huangjie.hjandroiddemos.rxjavademo.RxjavaDemoActivity;
 
@@ -43,5 +44,9 @@ public class MainActivity extends BaseActivity {
     @OnClick(R.id.btn_qqslidemenu)
     public void btn_qqslidemenu() {
         TestQQSlideMenuActivity.actionStart(this);
+    }
+    @OnClick(R.id.btn_mediarecord)
+    public void btn_mediarecord() {
+        RecordMp4.actionStart(this);
     }
 }
