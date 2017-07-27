@@ -3,9 +3,7 @@ package com.huangjie.hjandroiddemos;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.huangjie.hjandroiddemos.BaseActivity;
-import com.huangjie.hjandroiddemos.R;
-import com.huangjie.hjandroiddemos.mediarecorddemo.RecordMp4;
+import com.huangjie.hjandroiddemos.mediarecorderdemo.MediaRecorderActivity;
 import com.huangjie.hjandroiddemos.qqslidemenu.TestQQSlideMenuActivity;
 import com.huangjie.hjandroiddemos.rxjavademo.RxjavaDemoActivity;
 
@@ -47,6 +45,6 @@ public class MainActivity extends BaseActivity {
     }
     @OnClick(R.id.btn_mediarecord)
     public void btn_mediarecord() {
-        RecordMp4.actionStart(this);
+        MediaRecorderActivity.actionStart(this);
     }
 }

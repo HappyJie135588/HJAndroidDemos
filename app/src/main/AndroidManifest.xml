@@ -17,7 +17,6 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
     <!-- add by HJ end -->
-
     <application
         android:name=".BaseApplication"
         android:allowBackup="true"
@@ -34,7 +33,8 @@
         </activity>
         <activity android:name=".rxjavademo.RxjavaDemoActivity"/>
         <activity android:name=".qqslidemenu.TestQQSlideMenuActivity"/>
-        <activity android:name=".mediarecorddemo.RecordMp4"/>
+        <activity android:name=".mediarecorderdemo.MediaRecorderActivity">
+        </activity>
     </application>
 
 </manifest>
