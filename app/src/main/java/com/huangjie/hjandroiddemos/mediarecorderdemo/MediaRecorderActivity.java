@@ -1,48 +1,48 @@
 package com.huangjie.hjandroiddemos.mediarecorderdemo;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.hardware.Camera;
+import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.SystemClock;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
+import android.os.Environment;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.huangjie.hjandroiddemos.BaseActivity;
 import com.huangjie.hjandroiddemos.R;
-import com.huangjie.hjandroiddemos.utils.ToastUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MediaRecorderActivity extends BaseActivity implements SurfaceHolder.Callback {
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 
-    //预览SurfaceView
-    @BindView(R.id.surface_view)
-    public  SurfaceView   mSurfaceView;
+public class MediaRecorderActivity extends BaseActivity {
+
+    @BindView(R.id.fl_preview)
+    public FrameLayout mFrameLayout;
+    @BindView(R.id.iv_capture)
+    public ImageView   iv_capture;
+
+    private CameraPreview mPreview;
     private Camera        mCamera;
-    //拍摄停止按钮按钮
-    @BindView(R.id.iv_start_stop)
-    public  ImageView     mStartButton;
-    //录制视频
     private MediaRecorder mMediaRecorder;
-    private SurfaceHolder mSurfaceHolder;
-    //屏幕分辨率
-    private int           videoWidth, videoHeight;
-    //判断是否正在录制
-    private boolean isRecording;
-    //段视频保存的目录
-    private File    mTargetFile;
+    private boolean isRecording = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,22 +54,182 @@ public class MediaRecorderActivity extends BaseActivity implements SurfaceHolder
         ButterKnife.bind(this);
         initView();
     }
+    /** Check if this device has a camera */
+    /**
+     * Check if this device has a camera
+     */
+    private boolean checkCameraHardware(Context context) {
+        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            // this device has a camera
+            return true;
+        } else {
+            // no camera on this device
+            return false;
+        }
+    }
+
+    /**
+     * A safe way to get an instance of the Camera object.
+     */
+    public static Camera getCameraInstance() {
+        Camera c = null;
+        try {
+            c = Camera.open(); // attempt to get a Camera instance
+        } catch (Exception e) {
+            // Camera is not available (in use or does not exist)
+        }
+        return c; // returns null if camera is unavailable
+    }
 
     private void initView() {
-        videoWidth = 640;
-        videoHeight = 480;
+        // Create an instance of Camera
+        mCamera = getCameraInstance();
 
-        mSurfaceHolder = mSurfaceView.getHolder();
-        //设置屏幕分辨率
-        mSurfaceHolder.setFixedSize(videoWidth, videoHeight);
-        mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-        mSurfaceHolder.addCallback(this);
-        mMediaRecorder = new MediaRecorder();
+        // get Camera parameters
+        Camera.Parameters params = mCamera.getParameters();
+
+        List<String> focusModes = params.getSupportedFocusModes();
+        if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+            // Autofocus mode is supported
+            // set the focus mode
+            params.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+        }
+        // set Camera parameters
+        mCamera.setParameters(params);
+
+        // Create our Preview view and set it as the content of our activity.
+        mPreview = new CameraPreview(this, mCamera);
+        mFrameLayout.addView(mPreview);
 
     }
 
+    private boolean prepareVideoRecorder() {
+
+        //mCamera = getCameraInstance();
+        mMediaRecorder = new MediaRecorder();
+
+        // Step 1: Unlock and set camera to MediaRecorder
+        mCamera.unlock();
+        mMediaRecorder.setCamera(mCamera);
+
+        // Step 2: Set sources
+        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+        mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+
+        // Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
+        mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
+
+        // Step 4: Set output file
+        //File targetDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+        File mTargetFile = new File("/sdcard/1/", "MoTuBe" + System.currentTimeMillis() + ".mp4");
+        mMediaRecorder.setOutputFile(mTargetFile.getAbsolutePath());
+        //mMediaRecorder.setOutputFile(getOutputMediaFile(MEDIA_TYPE_VIDEO).toString());
+
+        //解决录制视频, 播放器横向问题
+        mMediaRecorder.setOrientationHint(90);
+
+        // Step 5: Set the preview output
+        mMediaRecorder.setPreviewDisplay(mPreview.getHolder().getSurface());
+
+        // Step 6: Prepare configured MediaRecorder
+        try {
+            mMediaRecorder.prepare();
+        } catch (Exception e) {
+            loggerHJ.d("Exception preparing MediaRecorder: " + e.getMessage());
+            releaseMediaRecorder();
+            return false;
+        }
+        return true;
+    }
+
+    @OnClick(R.id.iv_capture)
+    public void iv_capture() {
+        if (isRecording) {
+            // stop recording and release camera
+            mMediaRecorder.stop();  // stop the recording
+            releaseMediaRecorder(); // release the MediaRecorder object
+            mCamera.lock();         // take camera access back from MediaRecorder
+
+            // inform the user that recording has stopped
+            iv_capture.setImageResource(R.mipmap.hj_test_back);
+            isRecording = false;
+        } else {
+            // initialize video camera
+            if (prepareVideoRecorder()) {
+                // Camera is available and unlocked, MediaRecorder is prepared,
+                // now you can start recording
+                mMediaRecorder.start();
+
+                // inform the user that recording has started
+                iv_capture.setImageResource(R.mipmap.hj_test_stop);
+                isRecording = true;
+            } else {
+                // prepare didn't work, release the camera
+                releaseMediaRecorder();
+                // inform user
+            }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        releaseMediaRecorder();       // if you are using MediaRecorder, release it first
+        releaseCamera();              // release the camera immediately on pause event
+    }
+
+    private void releaseMediaRecorder() {
+        if (mMediaRecorder != null) {
+            mMediaRecorder.reset();   // clear recorder configuration
+            mMediaRecorder.release(); // release the recorder object
+            mMediaRecorder = null;
+            mCamera.lock();           // lock camera for later use
+        }
+    }
+
+    private void releaseCamera() {
+        if (mCamera != null) {
+            mCamera.release();        // release the camera for other applications
+            mCamera = null;
+        }
+    }
+
+
+    /**
+     * Create a file Uri for saving an image or video
+     */
+    private static Uri getOutputMediaFileUri() {
+        return Uri.fromFile(getOutputMediaFile());
+    }
+
+    /**
+     * Create a File for saving an image or video
+     */
+    private static File getOutputMediaFile() {
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "MyCameraApp");
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                loggerHJ.d("failed to create directory");
+                return null;
+            }
+        }
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                "VID_" + timeStamp + ".mp4");
+        return mediaFile;
+    }
+
     @OnClick(R.id.iv_back)
-    public void iv_back(){
+    public void iv_back() {
         finish();
     }
 
@@ -78,128 +238,5 @@ public class MediaRecorderActivity extends BaseActivity implements SurfaceHolder
         activity.startActivity(intent);
     }
 
-    @Override
-    public void surfaceCreated(SurfaceHolder surfaceHolder) {
-        mSurfaceHolder = surfaceHolder;
-        startPreView(surfaceHolder);
-    }
 
-    @Override
-    public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-        if (mCamera != null) {
-            //停止预览并释放摄像头资源
-            mCamera.stopPreview();
-            mCamera.release();
-            mCamera = null;
-        }
-        if (mMediaRecorder != null) {
-            mMediaRecorder.release();
-            mMediaRecorder = null;
-        }
-    }
-
-    /**
-     * 开启预览
-     *
-     * @param holder
-     */
-    private void startPreView(SurfaceHolder holder) {
-        if (mCamera == null) {
-            mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
-        }
-        if (mMediaRecorder == null) {
-            mMediaRecorder = new MediaRecorder();
-        }
-        if (mCamera != null) {
-            mCamera.setDisplayOrientation(90);
-            try {
-                mCamera.setPreviewDisplay(holder);
-                Camera.Parameters parameters = mCamera.getParameters();
-                //实现Camera自动对焦
-                List<String> focusModes = parameters.getSupportedFocusModes();
-                if (focusModes != null) {
-                    for (String mode : focusModes) {
-                        mode.contains("continuous-video");
-                        parameters.setFocusMode("continuous-video");
-                    }
-                }
-                mCamera.setParameters(parameters);
-                mCamera.startPreview();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @OnClick(R.id.iv_start_stop)
-    public void iv_start_stop() {
-        if (isRecording) {
-            //正在录制
-            //停止录制
-            stopRecordSave();
-            mStartButton.setImageResource(R.mipmap.hj_test_back);
-        } else {
-            //未录制
-            //开始录制
-            startRecord();
-            mStartButton.setImageResource(R.mipmap.hj_test_stop);
-        }
-    }
-
-    /**
-     * 开始录制
-     */
-    private void startRecord() {
-        if (mMediaRecorder != null) {
-            try {
-                //mMediaRecorder.reset();
-                mCamera.unlock();
-                mMediaRecorder.setCamera(mCamera);
-                //从相机采集视频
-                mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-                // 从麦克采集音频信息
-                mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-                // TODO: 2016/10/20  设置视频格式
-                mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-                mMediaRecorder.setVideoSize(videoWidth, videoHeight);
-                //每秒的帧数
-                mMediaRecorder.setVideoFrameRate(24);
-                //编码格式
-                mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.DEFAULT);
-                mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-                // 设置帧频率，然后就清晰了
-                mMediaRecorder.setVideoEncodingBitRate(1 * 1024 * 1024 * 100);
-                // TODO: 2016/10/20 临时写个文件地址, 稍候该!!!
-                //File targetDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
-                mTargetFile = new File("/sdcard/1/", "MoTube" + SystemClock.currentThreadTimeMillis() + ".mp4");
-                mMediaRecorder.setOutputFile(mTargetFile.getAbsolutePath());
-                mMediaRecorder.setPreviewDisplay(mSurfaceHolder.getSurface());
-                //解决录制视频, 播放器横向问题
-                mMediaRecorder.setOrientationHint(90);
-
-                mMediaRecorder.prepare();
-                //正式录制
-                mMediaRecorder.start();
-                isRecording = true;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
-    /**
-     * 停止录制 并且保存
-     */
-    private void stopRecordSave() {
-        if (isRecording) {
-            mMediaRecorder.stop();
-            isRecording = false;
-            ToastUtils.showToast("视频已经放至" + mTargetFile.getAbsolutePath());
-        }
-    }
 }

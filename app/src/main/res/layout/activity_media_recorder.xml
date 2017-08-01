@@ -7,10 +7,11 @@
     android:layout_height="match_parent"
     tools:context="com.huangjie.hjandroiddemos.mediarecorderdemo.MediaRecorderActivity">
 
-    <SurfaceView
-        android:id="@+id/surface_view"
+    <FrameLayout
+        android:id="@+id/fl_preview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        />
 
     <ImageView
         android:id="@+id/iv_back"
@@ -19,7 +20,7 @@
         android:src="@mipmap/hj_test_back"/>
 
     <ImageView
-        android:id="@+id/iv_light"
+        android:id="@+id/iv_flash"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginLeft="50dp"
@@ -31,20 +32,20 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginLeft="50dp"
-        android:layout_toRightOf="@id/iv_light"
+        android:layout_toRightOf="@id/iv_flash"
         android:src="@mipmap/hj_test_switch_camera"/>
 
     <TextView
         android:id="@+id/tv_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/iv_light"
-        android:layout_below="@id/iv_light"
+        android:layout_alignLeft="@id/iv_flash"
+        android:layout_below="@id/iv_flash"
         android:text="00:00"
         android:textSize="40dp"/>
 
     <ImageView
-        android:id="@+id/iv_start_stop"
+        android:id="@+id/iv_capture"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_alignParentBottom="true"

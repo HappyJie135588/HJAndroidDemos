@@ -7,14 +7,18 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <!-- 用于判断当前网络状态 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <!-- 文件写权限 -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <!-- 文件读权限 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    /*add by HJ 视频录制权限  begin*/
     <!-- 请求访问使用照相设备 -->
     <uses-permission android:name="android.permission.CAMERA"/>
+    <!--限制有摄像头设备安装-->
+    <uses-feature android:name="android.hardware.camera" />
+    <!-- 文件写权限 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <!-- 允许程序录制音频 -->
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    /*add by HJ end*/
 
     <!-- add by HJ end -->
     <application

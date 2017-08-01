@@ -17,7 +17,7 @@ import butterknife.ButterKnife;
  */
 
 public class BaseActivity extends AppCompatActivity {
-    public MyLogger loggerHJ = MyLogger.getHuangJie();
+    public static MyLogger loggerHJ = MyLogger.getHuangJie();
 
     // 对所有的activity进行管理
     private static List<Activity> mActivities = new LinkedList<Activity>();
