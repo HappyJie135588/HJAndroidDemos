@@ -7,11 +7,10 @@
     android:layout_height="match_parent"
     tools:context="com.huangjie.hjandroiddemos.mediarecorderdemo.MediaRecorderActivity">
 
-    <FrameLayout
-        android:id="@+id/fl_preview"
+    <SurfaceView
+        android:id="@+id/surfaceview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+        android:layout_height="match_parent" />
 
     <ImageView
         android:id="@+id/iv_back"
@@ -43,6 +42,12 @@
         android:layout_below="@id/iv_flash"
         android:text="00:00"
         android:textSize="40dp"/>
+    <ImageView
+        android:id="@+id/iv_play"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerInParent="true"
+        android:src="@mipmap/hj_test_start"/>
 
     <ImageView
         android:id="@+id/iv_capture"

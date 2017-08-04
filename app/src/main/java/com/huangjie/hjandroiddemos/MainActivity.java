@@ -3,6 +3,7 @@ package com.huangjie.hjandroiddemos;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.huangjie.hjandroiddemos.customview.CustormViewActivity;
 import com.huangjie.hjandroiddemos.mediarecorderdemo.MediaRecorderActivity;
 import com.huangjie.hjandroiddemos.qqslidemenu.TestQQSlideMenuActivity;
 import com.huangjie.hjandroiddemos.rxjavademo.RxjavaDemoActivity;
@@ -39,12 +40,19 @@ public class MainActivity extends BaseActivity {
     public void btn_rxjava() {
         RxjavaDemoActivity.actionStart(this);
     }
+
     @OnClick(R.id.btn_qqslidemenu)
     public void btn_qqslidemenu() {
         TestQQSlideMenuActivity.actionStart(this);
     }
+
     @OnClick(R.id.btn_mediarecord)
     public void btn_mediarecord() {
         MediaRecorderActivity.actionStart(this);
+    }
+
+    @OnClick(R.id.btn_customerview)
+    public void btn_customerview() {
+        CustormViewActivity.actionStart(this);
     }
 }

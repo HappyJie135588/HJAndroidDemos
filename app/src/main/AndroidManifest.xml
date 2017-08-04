@@ -9,11 +9,11 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <!-- 文件读权限 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    /*add by HJ 视频录制权限  begin*/
+    /*add by HJ 视频录制权限 begin*/
     <!-- 请求访问使用照相设备 -->
     <uses-permission android:name="android.permission.CAMERA"/>
-    <!--限制有摄像头设备安装-->
-    <uses-feature android:name="android.hardware.camera" />
+    <!-- 限制有摄像头设备安装 -->
+    <uses-feature android:name="android.hardware.camera"/>
     <!-- 文件写权限 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <!-- 允许程序录制音频 -->
@@ -38,6 +38,8 @@
         <activity android:name=".rxjavademo.RxjavaDemoActivity"/>
         <activity android:name=".qqslidemenu.TestQQSlideMenuActivity"/>
         <activity android:name=".mediarecorderdemo.MediaRecorderActivity">
+        </activity>
+        <activity android:name=".customview.CustormViewActivity">
         </activity>
     </application>
 
