@@ -2,44 +2,46 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
+    android:id="@+id/activity_media"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.huangjie.hjandroiddemos.MainActivity">
-
-    <TextView
-        android:id="@+id/sample_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"/>
+    tools:context="com.huangjie.hjandroiddemos.mediarecorderdemo.MediaActivity">
 
     <Button
-        android:id="@+id/btn_rxjava"
+        android:id="@+id/btn_sysrecord"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="RxjavaDemo"
+        android:text="btn_sysrecord"
+        android:textAllCaps="false"/>
+    <Button
+        android:id="@+id/btn_customerrecord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="btn_customerrecord"
+        android:textAllCaps="false"/>
+    <Button
+        android:id="@+id/btn_sysvideolist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="btn_sysvideolist"
+        android:textAllCaps="false"/>
+    <Button
+        android:id="@+id/btn_customervideolist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="btn_customervideolist"
         android:textAllCaps="false"/>
 
+    <VideoView
+        android:id="@+id/videoview"
+        android:layout_width="108dp"
+        android:layout_height="192dp"/>
     <Button
-        android:id="@+id/btn_qqslidemenu"
+        android:id="@+id/btn_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="QQSlideMenu"
-        android:textAllCaps="false"/>
-
-    <Button
-        android:id="@+id/btn_mediarecord"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="mediarecord"
-        android:textAllCaps="false"/>
-
-    <Button
-        android:id="@+id/btn_customerview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="btn_customerview"
+        android:text="btn_play"
         android:textAllCaps="false"/>
 
 </LinearLayout>

@@ -13,12 +13,10 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -40,6 +38,8 @@ import butterknife.OnClick;
 
 public class MediaRecorderActivity extends BaseActivity implements SurfaceHolder.Callback {
 
+    static final int REQUEST_CUSTOMER_VIDEO_CAPTURE = 2;
+
     @BindView(R.id.iv_flash)
     public ImageView   iv_flash;
     @BindView(R.id.iv_switch)
@@ -60,6 +60,7 @@ public class MediaRecorderActivity extends BaseActivity implements SurfaceHolder
     private boolean isRecording = false;
     private Timer mTimer;
     private int time = 0;
+    private Uri uri;
 
     private int cameraPosition = 1;//0代表后置摄像头，1代表前置摄像头
     private String mFilePath;
@@ -216,6 +217,8 @@ public class MediaRecorderActivity extends BaseActivity implements SurfaceHolder
             isRecording = false;
 
             mTimer.cancel();
+            toSetResult();
+
 
         } else {
             // initialize video camera
@@ -236,13 +239,21 @@ public class MediaRecorderActivity extends BaseActivity implements SurfaceHolder
             }
         }
     }
+
+    private void toSetResult() {
+        Intent intent = new Intent();
+        intent.setData(Uri.parse(mFilePath));
+        // 设置结果，并进行传送
+        setResult(REQUEST_CUSTOMER_VIDEO_CAPTURE,intent);
+    }
+
     @OnClick(R.id.iv_play)
     public void iv_play(){
         if (mediaPlayer == null) {
             mediaPlayer = new MediaPlayer();
         }
         mediaPlayer.reset();
-        Uri uri = Uri.parse(mFilePath);
+        uri = Uri.parse(mFilePath);
         mediaPlayer = MediaPlayer.create(this, uri);
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mediaPlayer.setDisplay(mSurfaceHolder);
@@ -341,7 +352,7 @@ public class MediaRecorderActivity extends BaseActivity implements SurfaceHolder
 
     public static void actionStart(Activity activity) {
         Intent intent = new Intent(activity, MediaRecorderActivity.class);
-        activity.startActivity(intent);
+        activity.startActivityForResult(intent,REQUEST_CUSTOMER_VIDEO_CAPTURE);
     }
 
 
