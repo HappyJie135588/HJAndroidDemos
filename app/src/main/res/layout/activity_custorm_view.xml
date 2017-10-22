@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_custorm_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.huangjie.hjandroiddemos.customview.CustormViewActivity">
 
     <com.huangjie.hjandroiddemos.customview.Topbar
@@ -14,6 +14,14 @@
         app:title="这是一个自定义控件"
         app:titleBackground="@mipmap/hj_test_start"
         app:titleTextColor="#00ff00"
-        app:titleTextSize="20dp"/>
+        app:titleTextSize="20dp" />
 
-</RelativeLayout>
+    <com.huangjie.hjandroiddemos.customview.SettingItemView
+        android:id="@+id/setting_item_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:destext="哈哈"
+        app:offtest="关闭"
+        app:ontest="开启" />
+
+</LinearLayout>
