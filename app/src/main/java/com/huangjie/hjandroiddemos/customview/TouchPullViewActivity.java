@@ -11,7 +11,7 @@ import com.huangjie.hjandroiddemos.R;
 import com.huangjie.hjandroiddemos.customview.widget.TouchPullView;
 
 public class TouchPullViewActivity extends BaseActivity {
-    private static final float TOUCH_MOVE_MAX_Y = 600;
+    private static final float TOUCH_MOVE_MAX_Y = 800;
     private float mTouchMoveStartY = 0;
     private TouchPullView mTouchPullView;
 
