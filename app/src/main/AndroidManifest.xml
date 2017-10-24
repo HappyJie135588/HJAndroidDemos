@@ -41,11 +41,15 @@
         <activity android:name=".qqslidemenu.TestQQSlideMenuActivity"/>
         <activity android:name=".mediarecorderdemo.MediaRecorderActivity">
         </activity>
-        <activity android:name=".customview.CustormViewActivity">
+        <activity android:name=".customview.TopbarViewActivity">
         </activity>
         <activity android:name=".mediarecorderdemo.MediaActivity">
         </activity>
         <activity android:name=".mediarecorderdemo.LocalVideoListActivity">
+        </activity>
+        <activity android:name=".customview.CustomViewActivity">
+        </activity>
+        <activity android:name=".customview.TouchPullViewActivity">
         </activity>
     </application>
 

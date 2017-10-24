@@ -18,7 +18,7 @@ public class MyLogger {
     private static MyLogger huangJie;//
 
     private static final String BASELOG  = "@utilLog@ ";
-    private static final String HUANGJIE = "@huangJie@ ";
+    private static final String HUANGJIE = "@xiong@ ";
 
     private MyLogger(String name) {
         mClassName = name;

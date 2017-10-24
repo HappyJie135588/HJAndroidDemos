@@ -6,9 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.huangjie.hjandroiddemos.customview.CustormViewActivity">
+    tools:context="com.huangjie.hjandroiddemos.customview.TopbarViewActivity">
 
-    <com.huangjie.hjandroiddemos.customview.Topbar
+    <com.huangjie.hjandroiddemos.customview.widget.Topbar
         android:layout_width="match_parent"
         android:layout_height="100dp"
         app:title="这是一个自定义控件"
@@ -16,7 +16,7 @@
         app:titleTextColor="#00ff00"
         app:titleTextSize="20dp" />
 
-    <com.huangjie.hjandroiddemos.customview.SettingItemView
+    <com.huangjie.hjandroiddemos.customview.widget.SettingItemView
         android:id="@+id/setting_item_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

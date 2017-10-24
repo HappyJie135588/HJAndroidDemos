@@ -5,17 +5,18 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.SeekBar;
 
+import com.huangjie.hjandroiddemos.BaseActivity;
 import com.huangjie.hjandroiddemos.R;
+import com.huangjie.hjandroiddemos.customview.widget.SettingItemView;
 
-public class CustormViewActivity extends AppCompatActivity {
+public class TopbarViewActivity extends BaseActivity {
     private SettingItemView setting_item_view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_custorm_view);
+        setContentView(R.layout.activity_topbar_view);
         initView();
     }
 
@@ -30,7 +31,7 @@ public class CustormViewActivity extends AppCompatActivity {
     }
 
     public static void actionStart(Activity activity) {
-        Intent intent = new Intent(activity, CustormViewActivity.class);
+        Intent intent = new Intent(activity, TopbarViewActivity.class);
         activity.startActivity(intent);
     }
 }

@@ -1,4 +1,4 @@
-package com.huangjie.hjandroiddemos.customview;
+package com.huangjie.hjandroiddemos.customview.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
