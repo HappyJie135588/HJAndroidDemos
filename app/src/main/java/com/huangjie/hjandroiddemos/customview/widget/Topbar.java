@@ -2,7 +2,6 @@ package com.huangjie.hjandroiddemos.customview.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -11,8 +10,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.huangjie.hjandroiddemos.R;
-
-import java.security.Policy;
 
 /**
  * Created by HuangJie on 2017/8/4.

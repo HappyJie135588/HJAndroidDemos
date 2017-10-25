@@ -51,6 +51,8 @@
         </activity>
         <activity android:name=".customview.TouchPullViewActivity">
         </activity>
+        <activity android:name=".customview.BezierActivity">
+        </activity>
     </application>
 
 </manifest>

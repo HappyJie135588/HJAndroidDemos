@@ -2,7 +2,6 @@ package com.huangjie.hjandroiddemos.customview;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
@@ -21,7 +20,7 @@ public class TopbarViewActivity extends BaseActivity {
     }
 
     private void initView() {
-        setting_item_view= (SettingItemView) findViewById(R.id.setting_item_view);
+        setting_item_view = (SettingItemView) findViewById(R.id.setting_item_view);
         setting_item_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

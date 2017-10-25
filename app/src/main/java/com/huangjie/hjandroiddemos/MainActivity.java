@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.huangjie.hjandroiddemos.customview.CustomViewActivity;
-import com.huangjie.hjandroiddemos.customview.TopbarViewActivity;
 import com.huangjie.hjandroiddemos.mediarecorderdemo.MediaActivity;
 import com.huangjie.hjandroiddemos.qqslidemenu.TestQQSlideMenuActivity;
 import com.huangjie.hjandroiddemos.rxjavademo.RxjavaDemoActivity;

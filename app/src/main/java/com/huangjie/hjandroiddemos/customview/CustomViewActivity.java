@@ -21,14 +21,19 @@ public class CustomViewActivity extends BaseActivity {
         ButterKnife.bind(this);
     }
 
-    @OnClick(R.id.tv_topbar_view)
+    @OnClick(R.id.btn_topbar_view)
     public void tv_topbar_view() {
         TopbarViewActivity.actionStart(this);
     }
 
-    @OnClick(R.id.tv_touchpull_view)
+    @OnClick(R.id.btn_touchpull_view)
     public void tv_touchpull_view() {
         TouchPullViewActivity.actionStart(this);
+    }
+
+    @OnClick(R.id.btn_bezier_view)
+    public void btn_bezier_view() {
+        BezierActivity.actionStart(this);
     }
 
     public static void actionStart(Activity activity) {

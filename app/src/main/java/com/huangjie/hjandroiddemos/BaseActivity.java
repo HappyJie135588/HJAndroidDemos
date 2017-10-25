@@ -10,8 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import butterknife.ButterKnife;
-
 /**
  * Created by HuangJie on 2017/7/14.
  */

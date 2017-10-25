@@ -3,7 +3,6 @@ package com.huangjie.hjandroiddemos.rxjavademo;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -11,7 +10,6 @@ import com.huangjie.hjandroiddemos.BaseActivity;
 import com.huangjie.hjandroiddemos.R;
 import com.huangjie.hjandroiddemos.utils.UIUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
