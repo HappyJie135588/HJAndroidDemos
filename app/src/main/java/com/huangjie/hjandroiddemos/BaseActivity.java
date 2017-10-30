@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.google.gson.Gson;
 import com.huangjie.hjandroiddemos.utils.MyLogger;
 
 import java.util.LinkedList;
@@ -15,7 +16,8 @@ import java.util.ListIterator;
  */
 
 public class BaseActivity extends AppCompatActivity {
-    public static MyLogger loggerHJ = MyLogger.getHuangJie();
+    protected static MyLogger loggerHJ = MyLogger.getHuangJie();
+    protected Gson gson = new Gson();
 
     // 对所有的activity进行管理
     private static List<Activity> mActivities = new LinkedList<Activity>();

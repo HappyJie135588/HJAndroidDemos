@@ -33,12 +33,13 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".rxjavademo.RxjavaDemoActivity"/>
-        <activity android:name=".qqslidemenu.TestQQSlideMenuActivity"/>
+        <activity android:name=".rxjavademo.RxjavaDemoActivity">
+        </activity>
+        <activity android:name=".qqslidemenu.TestQQSlideMenuActivity">
+        </activity>
         <activity android:name=".mediarecorderdemo.MediaRecorderActivity">
         </activity>
         <activity android:name=".customview.TopbarViewActivity">
