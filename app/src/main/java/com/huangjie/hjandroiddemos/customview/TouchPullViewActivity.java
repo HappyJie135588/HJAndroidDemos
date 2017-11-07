@@ -39,6 +39,7 @@ public class TouchPullViewActivity extends BaseActivity {
                         }
                         return true;
                     case MotionEvent.ACTION_UP:
+                        mTouchPullView.release();
                         break;
                 }
                 return false;

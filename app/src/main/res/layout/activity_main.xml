@@ -41,5 +41,11 @@
         android:layout_height="wrap_content"
         android:text="btn_customerview"
         android:textAllCaps="false"/>
+    <Button
+        android:id="@+id/btn_webview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="WebView"
+        android:textAllCaps="false"/>
 
 </LinearLayout>

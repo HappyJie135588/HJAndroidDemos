@@ -15,6 +15,7 @@ import com.huangjie.hjandroiddemos.mediarecorderdemo.MediaActivity;
 import com.huangjie.hjandroiddemos.qqslidemenu.TestQQSlideMenuActivity;
 import com.huangjie.hjandroiddemos.rxjavademo.RxjavaDemoActivity;
 import com.huangjie.hjandroiddemos.utils.ToastUtils;
+import com.huangjie.hjandroiddemos.webview.WebViewActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -155,8 +156,7 @@ public class MainActivity extends BaseActivity {
                     // Permission Denied
                 }
                 break;
-            case REQUEST_PERMISSIONS_CODE:
-            {
+            case REQUEST_PERMISSIONS_CODE: {
                 Map<String, Integer> perms = new HashMap<String, Integer>();
                 // Initial
                 perms.put(Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
@@ -186,6 +186,12 @@ public class MainActivity extends BaseActivity {
     public void btn_customerview() {
         CustomViewActivity.actionStart(this);
     }
+
+    @OnClick(R.id.btn_webview)
+    public void btn_webview() {
+        WebViewActivity.actionStart(this);
+    }
+
 
     private static long firstTime;
 

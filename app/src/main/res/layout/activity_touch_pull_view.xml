@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
@@ -10,6 +11,15 @@
     <com.huangjie.hjandroiddemos.customview.widget.TouchPullView
         android:id="@+id/touchPull"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        app:pColor="@color/color_ff4081"
+        app:pContentDrawable="@drawable/ic_draw_circle"
+        app:pContentDrawableMargin="2dp"
+        app:pDragHeight="120dp"
+        app:pRadius="20dp"
+        app:pTangentAngle="110"
+        app:pTargetGravityHeight="4dp"
+        app:pTargetWidth="200dp"
+        />
 
 </android.support.constraint.ConstraintLayout>
