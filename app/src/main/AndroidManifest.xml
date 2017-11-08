@@ -57,6 +57,8 @@
         </activity>
         <activity android:name=".webview.WebViewActivity">
         </activity>
+        <activity android:name=".websocket.WebSocketActivity">
+        </activity>
     </application>
 
 </manifest>
