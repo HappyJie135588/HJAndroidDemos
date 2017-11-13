@@ -14,7 +14,10 @@ import com.huangjie.hjandroiddemos.customview.CustomViewActivity;
 import com.huangjie.hjandroiddemos.mediarecorderdemo.MediaActivity;
 import com.huangjie.hjandroiddemos.qqslidemenu.TestQQSlideMenuActivity;
 import com.huangjie.hjandroiddemos.rxjavademo.RxjavaDemoActivity;
+import com.huangjie.hjandroiddemos.service.DownloadActivity;
+import com.huangjie.hjandroiddemos.service.ServiceActivity;
 import com.huangjie.hjandroiddemos.utils.ToastUtils;
+import com.huangjie.hjandroiddemos.websocket.WebSocketActivity;
 import com.huangjie.hjandroiddemos.webview.WebViewActivity;
 
 import java.util.ArrayList;
@@ -190,6 +193,19 @@ public class MainActivity extends BaseActivity {
     @OnClick(R.id.btn_webview)
     public void btn_webview() {
         WebViewActivity.actionStart(this);
+    }
+
+    @OnClick(R.id.btn_websocket)
+    public void btn_websocket() {
+        WebSocketActivity.actionStart(this);
+    }
+    @OnClick(R.id.btn_service)
+    public void btn_service() {
+        ServiceActivity.actionStart(this);
+    }
+    @OnClick(R.id.btn_download)
+    public void btn_download() {
+        DownloadActivity.actionStart(this);
     }
 
 

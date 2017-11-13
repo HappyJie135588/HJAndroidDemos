@@ -45,6 +45,7 @@ dependencies {
     /*butterknife*/
     /*Rxjava*/
     /*Retrofit*/
+    compile files('libs/java-websocket-1.3.0.jar')
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.jakewharton:butterknife:8.7.0'
     compile 'io.reactivex:rxjava:1.0.14'
@@ -56,5 +57,4 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
-    compile files('libs/java-websocket-1.3.0.jar')
 }

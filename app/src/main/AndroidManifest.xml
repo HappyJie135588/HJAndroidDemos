@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <!-- 文件读权限 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    /*add by HJ 视频录制权限 begin*/
+    <!-- add by HJ 视频录制权限 begin -->
     <!-- 请求访问使用照相设备 -->
     <uses-permission android:name="android.permission.CAMERA"/>
     <!-- 限制有摄像头设备安装 -->
@@ -20,8 +20,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <!-- 允许程序录制音频 -->
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    /*add by HJ end*/
 
+    <!-- add by HJ end -->
     <!-- add by HJ end -->
     <application
         android:name=".BaseApplication"
@@ -59,6 +59,23 @@
         </activity>
         <activity android:name=".websocket.WebSocketActivity">
         </activity>
+        <activity android:name=".service.ServiceActivity">
+        </activity>
+
+        <service
+            android:name=".service.TestService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
+
+        <activity android:name=".service.DownloadActivity">
+        </activity>
+
+        <service
+            android:name=".service.DownloadService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
     </application>
 
 </manifest>

@@ -47,5 +47,24 @@
         android:layout_height="wrap_content"
         android:text="WebView"
         android:textAllCaps="false"/>
+    <Button
+        android:id="@+id/btn_websocket"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="WebSocket"
+        android:textAllCaps="false"/>
+    <Button
+        android:id="@+id/btn_service"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Service"
+        android:textAllCaps="false"/>
+    <Button
+        android:id="@+id/btn_download"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Download"
+        android:textAllCaps="false"/>
+
 
 </LinearLayout>
