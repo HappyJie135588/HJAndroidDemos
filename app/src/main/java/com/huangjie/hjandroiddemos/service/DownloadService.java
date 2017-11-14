@@ -24,8 +24,10 @@ public class DownloadService extends Service {
 
     public static final String ACTION_START = "ACTION_START";
     public static final String ACTION_STOP = "ACTION_STOP";
+    public static final String ACTION_UPDATE = "ACTION_UPDATE";
     public static final String FILE_INFO = "FILE_INFO";
     public static final int MSG_INIT = 0;
+    private DownloadTask mTask = null;
 
 
     public static final String DOWNLOAD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/HJAndroidDemos/";
@@ -39,9 +41,10 @@ public class DownloadService extends Service {
         loggerHJ.d(fileInfo.toString());
         if (ACTION_START.equals(intent.getAction())) {
             new InitThread(fileInfo).start();
-
         } else if (ACTION_STOP.equals(intent.getAction())) {
-
+            if(mTask!=null){
+                mTask.setPause(true);
+            }
         }
         return super.onStartCommand(intent, flags, startId);
     }
@@ -59,6 +62,8 @@ public class DownloadService extends Service {
                 case MSG_INIT:
                     FileInfo fileInfo = (FileInfo) msg.obj;
                     loggerHJ.d(fileInfo.toString());
+                    mTask = new DownloadTask(DownloadService.this,fileInfo);
+                    mTask.download();
                     break;
             }
         }
