@@ -18,33 +18,41 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class DownloadService extends Service {
     protected static MyLogger loggerHJ = MyLogger.getHuangJie();
-
+    //开始下载命令
     public static final String ACTION_START = "ACTION_START";
+    //停止下载命令
     public static final String ACTION_STOP = "ACTION_STOP";
+    //结束下载命令
+    public static final String ACTION_FINISH = "ACTION_FINISH";
+    //更新UI命令
     public static final String ACTION_UPDATE = "ACTION_UPDATE";
     public static final String FILE_INFO = "FILE_INFO";
     public static final int MSG_INIT = 0;
-    private DownloadTask mTask = null;
-
-
+    private InitThread mInitThread;
+    //下载路径
     public static final String DOWNLOAD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/HJAndroidDemos/";
 
-    public DownloadService() {
-    }
+    //下载任务的集合
+    private Map<Integer, DownloadTask> mTasks = new LinkedHashMap<>();
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         FileInfo fileInfo = (FileInfo) intent.getSerializableExtra(FILE_INFO);
         loggerHJ.d(fileInfo.toString());
         if (ACTION_START.equals(intent.getAction())) {
-            new InitThread(fileInfo).start();
+            //接到下载命令启动初始化线程
+            mInitThread = new InitThread(fileInfo);
+            DownloadTask.getExecutorService().execute(mInitThread);
         } else if (ACTION_STOP.equals(intent.getAction())) {
-            if(mTask!=null){
-                mTask.setPause(true);
-            }
+            //停止下载
+            //从集合中取出下载任务
+            DownloadTask task = mTasks.get(fileInfo.getId());
+            task.setPause(true);
         }
         return super.onStartCommand(intent, flags, startId);
     }
@@ -62,8 +70,11 @@ public class DownloadService extends Service {
                 case MSG_INIT:
                     FileInfo fileInfo = (FileInfo) msg.obj;
                     loggerHJ.d(fileInfo.toString());
-                    mTask = new DownloadTask(DownloadService.this,fileInfo);
-                    mTask.download();
+                    //启动下载任务
+                    DownloadTask task = new DownloadTask(DownloadService.this, fileInfo,3);
+                    task.download();
+                    //把下载任务添加到集合中
+                    mTasks.put(fileInfo.getId(),task);
                     break;
             }
         }

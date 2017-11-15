@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -14,6 +15,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.huangjie.hjandroiddemos.BaseActivity;
 import com.huangjie.hjandroiddemos.R;
 import com.huangjie.hjandroiddemos.service.entity.FileInfo;
+import com.huangjie.hjandroiddemos.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,14 +42,17 @@ public class DownloadActivity extends BaseActivity implements BaseQuickAdapter.O
 
     private void initView() {
         rv_file.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter= new FileListAdapter();
+        mAdapter = new FileListAdapter();
         mAdapter.setOnItemChildClickListener(this);
         rv_file.setAdapter(mAdapter);
+        ((DefaultItemAnimator) rv_file.getItemAnimator()).setSupportsChangeAnimations(false);//解决RecyclerView局部刷新时闪烁
         //注册广播接收器
         IntentFilter filter = new IntentFilter();
         filter.addAction(DownloadService.ACTION_UPDATE);
+        filter.addAction(DownloadService.ACTION_FINISH);
         registerReceiver(mReceiver, filter);
     }
+
     private void initData() {
         mInfoList = new ArrayList<>();
         FileInfo fileInfo1 = new FileInfo(0,
@@ -86,15 +91,21 @@ public class DownloadActivity extends BaseActivity implements BaseQuickAdapter.O
     BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            FileInfo fileInfo = (FileInfo) intent.getSerializableExtra("fileInfo");
+            loggerHJ.d(intent.getAction() + fileInfo.toString());
             if (DownloadService.ACTION_UPDATE.equals(intent.getAction())) {
-                int finished = intent.getIntExtra("finished", 0);
-//                pb_progress.setProgress(finished);
+            } else if (DownloadService.ACTION_FINISH.equals(intent.getAction())) {
+                fileInfo.setFinished(0);
+                ToastUtils.showToast(fileInfo.getFileName() + "下载完毕");
             }
+            mAdapter.getItem(fileInfo.getId()).setFinished(fileInfo.getFinished());
+            mAdapter.notifyItemChanged(fileInfo.getId());
         }
     };
 
     @Override
     public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+        loggerHJ.d(view.toString() + "被点击了");
         FileInfo fileInfo = (FileInfo) adapter.getItem(position);
         switch (view.getId()) {
             case R.id.bt_start:

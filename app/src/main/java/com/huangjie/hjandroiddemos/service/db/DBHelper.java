@@ -14,8 +14,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "download.db";
     private static final int VERSION = 1;
+    private static DBHelper sHelper;
 
-//    private static final String SQL_CREATE = "create table thread_info(_id integer primary key autoincrement," +
+    //    private static final String SQL_CREATE = "create table thread_info(_id integer primary key autoincrement," +
 //            "thread_id integer,url text,start integer,end integer,finished integer)";
     private static final String SQL_CREATE = "create table " + MyDownloadTable.NAME + "(" +
             "_id integer primary key autoincrement, " +
@@ -26,11 +27,17 @@ public class DBHelper extends SQLiteOpenHelper {
             MyDownloadTable.Clos.my_finished + " integer" + ")";
 
 
-    private static final String SQL_DROP = "drop table if exists "+MyDownloadTable.NAME;
+    private static final String SQL_DROP = "drop table if exists " + MyDownloadTable.NAME;
 
-    public DBHelper(Context context) {
+    public static DBHelper getInstance(Context context) {
+        if (sHelper == null) {
+            sHelper = new DBHelper(context);
+        }
+        return sHelper;
+    }
+
+    private DBHelper(Context context) {
         super(context, DB_NAME, null, VERSION);
-
     }
 
     @Override

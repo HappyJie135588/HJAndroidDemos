@@ -19,26 +19,13 @@ import static com.huangjie.hjandroiddemos.service.db.MyDownloadDbSchema.MyDownlo
 public class ThreadDAOImpl implements ThreadDAO {
 
     private DBHelper mHelper = null;
-    private static ThreadDAOImpl mThreadDAO;
-
-    /**
-     * 单例
-     *
-     * @return
-     */
-    public static ThreadDAO get(Context context) {
-        if (mThreadDAO == null) {
-            mThreadDAO = new ThreadDAOImpl(context);
-        }
-        return mThreadDAO;
-    }
 
     public ThreadDAOImpl(Context context) {
-        mHelper = new DBHelper(context);
+        mHelper = DBHelper.getInstance(context);
     }
 
     @Override
-    public void insertThread(ThreadInfo threadInfo) {
+    public synchronized void insertThread(ThreadInfo threadInfo) {
         SQLiteDatabase db = mHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(Clos.my_thread_id, threadInfo.getId());
@@ -51,14 +38,14 @@ public class ThreadDAOImpl implements ThreadDAO {
     }
 
     @Override
-    public void deleteThread(String url, int thread_id) {
+    public synchronized void deleteThread(String url) {
         SQLiteDatabase db = mHelper.getWritableDatabase();
-        db.delete(NAME, Clos.my_url + " = ? and " + Clos.my_thread_id + " = ? ", new String[]{url, thread_id + ""});
+        db.delete(NAME, Clos.my_url + " = ? ", new String[]{url});
         db.close();
     }
 
     @Override
-    public void updateThread(String url, int thread_id, int finished) {
+    public synchronized void updateThread(String url, int thread_id, int finished) {
         SQLiteDatabase db = mHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(Clos.my_finished, finished);
@@ -69,7 +56,7 @@ public class ThreadDAOImpl implements ThreadDAO {
     @Override
     public List<ThreadInfo> getThreads(String url) {
         List<ThreadInfo> threadInfoList = new ArrayList<>();
-        SQLiteDatabase db = mHelper.getWritableDatabase();
+        SQLiteDatabase db = mHelper.getReadableDatabase();
         Cursor cursor = db.query(NAME, null, Clos.my_url + " = ? ", new String[]{url}, null, null, null);
         while (cursor.moveToNext()) {
             ThreadInfo threadInfo = new ThreadInfo();
@@ -87,8 +74,11 @@ public class ThreadDAOImpl implements ThreadDAO {
 
     @Override
     public boolean isExists(String url, int thread_id) {
-        SQLiteDatabase db = mHelper.getWritableDatabase();
+        SQLiteDatabase db = mHelper.getReadableDatabase();
         Cursor cursor = db.query(NAME, null, Clos.my_url + " = ? and " + Clos.my_thread_id + " = ? ", new String[]{url, thread_id + ""}, null, null, null);
-        return cursor.moveToFirst();
+        boolean isExists = cursor.moveToFirst();
+        cursor.close();
+        db.close();
+        return isExists;
     }
 }
