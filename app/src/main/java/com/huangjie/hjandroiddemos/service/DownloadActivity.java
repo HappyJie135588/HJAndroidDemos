@@ -14,6 +14,7 @@ import android.view.View;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.huangjie.hjandroiddemos.BaseActivity;
 import com.huangjie.hjandroiddemos.R;
+import com.huangjie.hjandroiddemos.service.db.ThreadDAOImpl;
 import com.huangjie.hjandroiddemos.service.entity.FileInfo;
 import com.huangjie.hjandroiddemos.utils.ToastUtils;
 
@@ -30,6 +31,8 @@ public class DownloadActivity extends BaseActivity implements BaseQuickAdapter.O
     public RecyclerView rv_file;
     private FileListAdapter mAdapter;
     private List<FileInfo> mInfoList;
+    private NotificationUtil mNotificationUtil;
+    private ThreadDAOImpl mDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +51,7 @@ public class DownloadActivity extends BaseActivity implements BaseQuickAdapter.O
         ((DefaultItemAnimator) rv_file.getItemAnimator()).setSupportsChangeAnimations(false);//解决RecyclerView局部刷新时闪烁
         //注册广播接收器
         IntentFilter filter = new IntentFilter();
+        filter.addAction(DownloadService.ACTION_START);
         filter.addAction(DownloadService.ACTION_UPDATE);
         filter.addAction(DownloadService.ACTION_FINISH);
         registerReceiver(mReceiver, filter);
@@ -71,7 +75,12 @@ public class DownloadActivity extends BaseActivity implements BaseQuickAdapter.O
                 "http://sw.bos.baidu.com/sw-search-sp/software/af33424968c2b/cloudmusicsetup_2.2.2.195462.exe",
                 "cloudmusicsetup_2.2.2.195462.exe", 0, 0);
         mInfoList.add(fileInfo4);
+        mDAO = new ThreadDAOImpl(this);
+        for (FileInfo fileInfo:mInfoList) {
+            fileInfo.setProgress(mDAO.getProgress(fileInfo.getUrl()));
+        }
         mAdapter.setNewData(mInfoList);
+        mNotificationUtil = new NotificationUtil(DownloadActivity.this);
     }
 
     @Override
@@ -93,12 +102,19 @@ public class DownloadActivity extends BaseActivity implements BaseQuickAdapter.O
         public void onReceive(Context context, Intent intent) {
             FileInfo fileInfo = (FileInfo) intent.getSerializableExtra("fileInfo");
             loggerHJ.d(intent.getAction() + fileInfo.toString());
-            if (DownloadService.ACTION_UPDATE.equals(intent.getAction())) {
+            if (DownloadService.ACTION_START.equals(intent.getAction())) {
+                //显示通知
+                mNotificationUtil.showNotification(fileInfo);
+            } else if (DownloadService.ACTION_UPDATE.equals(intent.getAction())) {
+                //更新通知里的进度
+                mNotificationUtil.updateNotification(fileInfo.getId(), fileInfo.getProgress());
             } else if (DownloadService.ACTION_FINISH.equals(intent.getAction())) {
-                fileInfo.setFinished(0);
+                fileInfo.setProgress(0);
                 ToastUtils.showToast(fileInfo.getFileName() + "下载完毕");
+                //取消通知
+                mNotificationUtil.cancelNotification(fileInfo.getId());
             }
-            mAdapter.getItem(fileInfo.getId()).setFinished(fileInfo.getFinished());
+            mAdapter.getItem(fileInfo.getId()).setProgress(fileInfo.getProgress());
             mAdapter.notifyItemChanged(fileInfo.getId());
         }
     };
@@ -113,12 +129,16 @@ public class DownloadActivity extends BaseActivity implements BaseQuickAdapter.O
                 startIntent.setAction(DownloadService.ACTION_START);
                 startIntent.putExtra(DownloadService.FILE_INFO, fileInfo);
                 startService(startIntent);
+                adapter.getViewByPosition(rv_file,position,R.id.bt_start).setVisibility(View.INVISIBLE);
+                adapter.getViewByPosition(rv_file,position,R.id.bt_stop).setVisibility(View.VISIBLE);
                 break;
             case R.id.bt_stop:
                 Intent stopIntent = new Intent(this, DownloadService.class);
                 stopIntent.setAction(DownloadService.ACTION_STOP);
                 stopIntent.putExtra(DownloadService.FILE_INFO, fileInfo);
                 startService(stopIntent);
+                adapter.getViewByPosition(rv_file,position,R.id.bt_start).setVisibility(View.VISIBLE);
+                adapter.getViewByPosition(rv_file,position,R.id.bt_stop).setVisibility(View.INVISIBLE);
                 break;
         }
 

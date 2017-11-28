@@ -29,7 +29,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class LocalVideoListActivity extends BaseActivity implements AdapterView.OnItemClickListener {
+public class LocalVideoListActivity2 extends BaseActivity implements AdapterView.OnItemClickListener {
     public static int LOCAL_VIDEO_RESULT = 3;
 
     @BindView(R.id.lv_video)
@@ -82,7 +82,7 @@ public class LocalVideoListActivity extends BaseActivity implements AdapterView.
     }
 
     public static void actionStart(Activity activity) {
-        Intent intent = new Intent(activity, LocalVideoListActivity.class);
+        Intent intent = new Intent(activity, LocalVideoListActivity2.class);
         activity.startActivityForResult(intent,LOCAL_VIDEO_RESULT);
     }
 

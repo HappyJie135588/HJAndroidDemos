@@ -64,7 +64,7 @@ public class MediaActivity extends BaseActivity {
 
     @OnClick(R.id.btn_customervideolist)
     public void btn_customervideolist() {
-        LocalVideoListActivity.actionStart(this);
+        LocalVideoListActivity2.actionStart(this);
     }
 
     @OnClick(R.id.btn_play)
@@ -90,7 +90,7 @@ public class MediaActivity extends BaseActivity {
             mVideoView.setVideoURI(videoUri);
             //mVideoView.start();//程序运行时自动开始播放视频
             //mVideoView.requestFocus();//播放窗口为当前窗口
-        } else if (requestCode == LocalVideoListActivity.LOCAL_VIDEO_RESULT) {
+        } else if (requestCode == LocalVideoListActivity2.LOCAL_VIDEO_RESULT) {
             Uri videoUri = intent.getData();
             loggerHJ.d("地址:" + videoUri.toString());
             ToastUtils.showToast(videoUri.toString());

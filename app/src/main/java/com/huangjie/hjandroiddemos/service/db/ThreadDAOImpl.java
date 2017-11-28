@@ -81,4 +81,19 @@ public class ThreadDAOImpl implements ThreadDAO {
         db.close();
         return isExists;
     }
+
+    public int getProgress(String url) {
+        List<ThreadInfo> threadInfos = getThreads(url);
+        int length = 0;
+        long finished = 0;
+        for (ThreadInfo threadInfo : threadInfos) {
+            length += threadInfo.getEnd() - threadInfo.getStart();
+            finished += threadInfo.getFinished();
+        }
+        if (length == 0) {
+            return 0;
+        } else {
+            return (int) (finished * 100 / length);
+        }
+    }
 }

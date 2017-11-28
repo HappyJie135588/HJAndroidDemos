@@ -5,7 +5,7 @@
     android:id="@+id/activity_local_video_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.huangjie.hjandroiddemos.mediarecorderdemo.LocalVideoListActivity">
+    tools:context="com.huangjie.hjandroiddemos.mediarecorderdemo.LocalVideoListActivity2">
 
     <ListView
         android:id="@+id/lv_video"

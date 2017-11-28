@@ -7,6 +7,7 @@ import com.huangjie.hjandroiddemos.service.db.ThreadDAO;
 import com.huangjie.hjandroiddemos.service.db.ThreadDAOImpl;
 import com.huangjie.hjandroiddemos.service.entity.FileInfo;
 import com.huangjie.hjandroiddemos.service.entity.ThreadInfo;
+import com.huangjie.hjandroiddemos.utils.MyLogger;
 
 import java.io.File;
 import java.io.InputStream;
@@ -15,6 +16,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -24,10 +27,11 @@ import java.util.concurrent.Executors;
  */
 
 public class DownloadTask {
+    private MyLogger loggerHJ = MyLogger.getHuangJie();
     private Context mContext;
     private FileInfo mFileInfo;
     private ThreadDAO mDAO;
-    private int mFinished = 0;
+    private long mFinished = 0;
     private boolean isPause;
     //线程数量
     private int mThreadCount;
@@ -35,7 +39,8 @@ public class DownloadTask {
     private List<DownloadThread> mThreadList;
     //线程池
     private static ExecutorService sExecutorService = Executors.newCachedThreadPool();
-
+    //定时器
+    private Timer mTimer = new Timer();
 
 
     public DownloadTask(Context context, FileInfo fileInfo) {
@@ -51,6 +56,7 @@ public class DownloadTask {
 
     public void setPause(boolean pause) {
         isPause = pause;
+        mTimer.cancel();
     }
 
     public static ExecutorService getExecutorService() {
@@ -79,11 +85,22 @@ public class DownloadTask {
         //启动多个线程进行下载
         for (ThreadInfo threadInfo : threadInfos) {
             DownloadThread thread = new DownloadThread(threadInfo);
-            thread.start();
             sExecutorService.execute(thread);
             //添加线程到集合中
             mThreadList.add(thread);
         }
+        //启动定时任务
+        Intent intent = new Intent(DownloadService.ACTION_UPDATE);
+        mTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                //发送广播修改Activity进度
+                loggerHJ.d("mFinished:" + mFinished);
+                mFileInfo.setProgress((int) (mFinished * 100 / mFileInfo.getLength()));
+                intent.putExtra("fileInfo", mFileInfo);
+                mContext.sendBroadcast(intent);
+            }
+        }, 100, 500);
 
     }
 
@@ -100,6 +117,8 @@ public class DownloadTask {
             }
         }
         if (allFinished) {
+            //取消定时器
+            mTimer.cancel();
             //删除线程信息
             mDAO.deleteThread(mFileInfo.getUrl());
             //发送广播通知UI下载任务结束
@@ -142,15 +161,18 @@ public class DownloadTask {
                 File file = new File(DownloadService.DOWNLOAD_PATH, mFileInfo.getFileName());
                 raf = new RandomAccessFile(file, "rwd");
                 raf.seek(start);
-                Intent intent = new Intent(DownloadService.ACTION_UPDATE);
-                mFinished += mThreadInfo.getFinished();
+                synchronized (DownloadTask.this) {
+                    loggerHJ.d(getId() + "mFileInfo:开始 " + mFinished);
+                    mFinished += mThreadInfo.getFinished();
+                    loggerHJ.d(getId() + "mThreadInfo.getFinished(): " + mThreadInfo.getFinished());
+                    loggerHJ.d(getId() + "mFileInfo:结束 " + mFinished);
+                }
                 //开始下载
                 if (conn.getResponseCode() == 206) {
                     //读取数据
                     input = conn.getInputStream();
                     byte[] buffer = new byte[1024 * 8];
                     int len = -1;
-                    long time = System.currentTimeMillis();
                     while ((len = input.read(buffer)) != -1) {
                         //写入文件
                         raf.write(buffer, 0, len);
@@ -158,13 +180,6 @@ public class DownloadTask {
                         //累加每个线程完成的进度
                         mFinished += len;
                         mThreadInfo.setFinished(mThreadInfo.getFinished() + len);
-                        //间隔500毫秒更新一次进度
-                        if (System.currentTimeMillis() - time > 500) {
-                            time = System.currentTimeMillis();
-                            mFileInfo.setFinished(mFinished * 100 / mFileInfo.getLength());
-                            intent.putExtra("fileInfo", mFileInfo);
-                            mContext.sendBroadcast(intent);
-                        }
                         //在下载暂停时,保存下载进度
                         if (isPause) {
                             mDAO.updateThread(mThreadInfo.getUrl(), mThreadInfo.getId(), mThreadInfo.getFinished());

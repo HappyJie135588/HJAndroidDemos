@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.huangjie.hjandroiddemos.customview.CustomViewActivity;
+import com.huangjie.hjandroiddemos.fragment.TestFragmentActivity;
 import com.huangjie.hjandroiddemos.mediarecorderdemo.MediaActivity;
 import com.huangjie.hjandroiddemos.qqslidemenu.TestQQSlideMenuActivity;
 import com.huangjie.hjandroiddemos.rxjavademo.RxjavaDemoActivity;
@@ -206,6 +207,10 @@ public class MainActivity extends BaseActivity {
     @OnClick(R.id.btn_download)
     public void btn_download() {
         DownloadActivity.actionStart(this);
+    }
+    @OnClick(R.id.btn_fragment)
+    public void btn_fragment() {
+        TestFragmentActivity.actionStart(this);
     }
 
 

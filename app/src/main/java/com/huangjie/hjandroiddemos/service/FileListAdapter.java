@@ -20,10 +20,9 @@ public class FileListAdapter extends BaseQuickAdapter<FileInfo, BaseViewHolder> 
 
     @Override
     protected void convert(BaseViewHolder helper, FileInfo item) {
-        loggerHJ.d(item.toString());
         helper.setText(R.id.tv_name, item.getFileName());
         ProgressBar pb_progress = helper.getView(R.id.pb_progress);
-        pb_progress.setProgress(item.getFinished());
+        pb_progress.setProgress(item.getProgress());
         helper.addOnClickListener(R.id.bt_start);
         helper.addOnClickListener(R.id.bt_stop);
     }

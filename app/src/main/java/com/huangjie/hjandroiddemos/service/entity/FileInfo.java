@@ -11,17 +11,17 @@ public class FileInfo implements Serializable {
     private String url;
     private String fileName;
     private int length;
-    private int finished;
+    private int progress;
 
     public FileInfo() {
     }
 
-    public FileInfo(int id, String url, String fileName, int length, int finished) {
+    public FileInfo(int id, String url, String fileName, int length, int progress) {
         this.id = id;
         this.url = url;
         this.fileName = fileName;
         this.length = length;
-        this.finished = finished;
+        this.progress = progress;
     }
 
     public int getId() {
@@ -56,22 +56,21 @@ public class FileInfo implements Serializable {
         this.length = length;
     }
 
-    public int getFinished() {
-        return finished;
+    public int getProgress() {
+        return progress;
     }
 
-    public void setFinished(int finished) {
-        this.finished = finished;
+    public void setProgress(int progress) {
+        this.progress = progress;
     }
 
     @Override
     public String toString() {
         return "FileInfo{" +
                 "id=" + id +
-                ", url='" + url + '\'' +
                 ", fileName='" + fileName + '\'' +
                 ", length=" + length +
-                ", finished=" + finished +
+                ", progress=" + progress +
                 '}';
     }
 }

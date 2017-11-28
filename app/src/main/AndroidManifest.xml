@@ -47,7 +47,7 @@
         </activity>
         <activity android:name=".mediarecorderdemo.MediaActivity">
         </activity>
-        <activity android:name=".mediarecorderdemo.LocalVideoListActivity">
+        <activity android:name=".mediarecorderdemo.LocalVideoListActivity2">
         </activity>
         <activity android:name=".customview.CustomViewActivity">
         </activity>
@@ -68,7 +68,9 @@
             android:exported="true">
         </service>
 
-        <activity android:name=".service.DownloadActivity">
+        <activity
+            android:name=".service.DownloadActivity"
+            android:launchMode="singleTop">
         </activity>
 
         <service
@@ -76,6 +78,9 @@
             android:enabled="true"
             android:exported="true">
         </service>
+
+        <activity android:name=".fragment.TestFragmentActivity">
+        </activity>
     </application>
 
 </manifest>

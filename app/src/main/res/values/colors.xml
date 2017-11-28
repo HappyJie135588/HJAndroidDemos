@@ -4,5 +4,13 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="color_ff4081">#FF4081</color>
-    <color name="color_fFa0b1">#fFa0b1</color>
+    <color name="color_fFa0b1">#000000</color>
+    <color name="color_0000ff">#0000ff</color>
+    <color name="color_00ff00">#00ff00</color>
+    <color name="color_00ffff">#00ffff</color>
+    <color name="color_ff0000">#ff0000</color>
+    <color name="color_ff00ff">#ff00ff</color>
+    <color name="color_ffff00">#ffff00</color>
+    <color name="color_ffffff">#ffffff</color>
+
 </resources>

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.huangjie.hjandroiddemos.crashhandler.CrashHandler;
+
 /**
  * Created by HuangJie on 2017/6/23.
  */
@@ -16,6 +18,8 @@ public class BaseApplication extends Application {
     private static long    mMainThreadId;
     private static Looper  mMainLooper;
     private static Handler mMainHandler;
+    //异常捕获
+    private CrashHandler mCrashHandler;
 
     //应用程序的入口
     @Override
@@ -35,6 +39,9 @@ public class BaseApplication extends Application {
         mMainLooper = getMainLooper();
 
         mMainHandler = new Handler();
+        //异常捕获
+        mCrashHandler = CrashHandler.getInstance();
+        mCrashHandler.init(mContext);
 
     }
 

@@ -52,6 +52,7 @@ public class DownloadService extends Service {
             //停止下载
             //从集合中取出下载任务
             DownloadTask task = mTasks.get(fileInfo.getId());
+            loggerHJ.d("停止下载: "+fileInfo);
             task.setPause(true);
         }
         return super.onStartCommand(intent, flags, startId);
@@ -71,10 +72,14 @@ public class DownloadService extends Service {
                     FileInfo fileInfo = (FileInfo) msg.obj;
                     loggerHJ.d(fileInfo.toString());
                     //启动下载任务
-                    DownloadTask task = new DownloadTask(DownloadService.this, fileInfo,3);
+                    DownloadTask task = new DownloadTask(DownloadService.this, fileInfo, 3);
                     task.download();
                     //把下载任务添加到集合中
-                    mTasks.put(fileInfo.getId(),task);
+                    mTasks.put(fileInfo.getId(), task);
+                    //发送启动命令的广播
+                    Intent intent = new Intent(DownloadService.ACTION_START);
+                    intent.putExtra("fileInfo", fileInfo);
+                    sendBroadcast(intent);
                     break;
             }
         }
