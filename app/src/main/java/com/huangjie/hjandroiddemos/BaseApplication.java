@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.huangjie.hjandroiddemos.crashhandler.CrashHandler;
+import com.tencent.bugly.crashreport.CrashReport;
 
 /**
  * Created by HuangJie on 2017/6/23.
@@ -42,6 +43,8 @@ public class BaseApplication extends Application {
         //异常捕获
         mCrashHandler = CrashHandler.getInstance();
         mCrashHandler.init(mContext);
+        //bugly
+        CrashReport.initCrashReport(getApplicationContext(), "14f248c088", true);
 
     }
 

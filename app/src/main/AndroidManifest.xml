@@ -5,6 +5,8 @@
     <!-- add by HJ begin -->
     <!-- 访问网络权限 -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!--屏幕保持唤醒 不锁屏-->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <!-- 用于判断当前网络状态 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <!-- 文件读权限 -->
@@ -20,6 +22,9 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <!-- 允许程序录制音频 -->
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.READ_LOGS"/>
 
     <!-- add by HJ end -->
     <!-- add by HJ end -->
@@ -80,6 +85,12 @@
         </service>
 
         <activity android:name=".fragment.TestFragmentActivity">
+        </activity>
+        <activity android:name=".live.LiveListActivity">
+        </activity>
+        <activity
+            android:name=".live.LiveActivity"
+            android:screenOrientation="landscape">
         </activity>
     </application>
 
