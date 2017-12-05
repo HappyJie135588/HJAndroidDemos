@@ -18,6 +18,15 @@ android {
         jackOptions {
             enabled true
         }
+        ndk {
+            // 设置支持的SO库架构
+
+//            abiFilters 'armeabi', 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
+            abiFilters "armeabi-v7a", "x86"
+
+        }
+        multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
@@ -59,7 +68,8 @@ dependencies {
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
     compile 'com.android.support:recyclerview-v7:26.0.0-alpha1'
     compile 'com.tencent.bugly:crashreport:latest.release'
+    compile 'com.android.support:support-v4:26.+'
+    compile 'com.android.support:support-vector-drawable:26.+'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
-    compile project(':vitamio')
 }

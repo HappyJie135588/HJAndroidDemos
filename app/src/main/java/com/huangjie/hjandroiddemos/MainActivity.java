@@ -14,6 +14,7 @@ import com.huangjie.hjandroiddemos.customview.CustomViewActivity;
 import com.huangjie.hjandroiddemos.fragment.TestFragmentActivity;
 import com.huangjie.hjandroiddemos.live.LiveListActivity;
 import com.huangjie.hjandroiddemos.mediarecorderdemo.MediaActivity;
+import com.huangjie.hjandroiddemos.preference.SettingActivity;
 import com.huangjie.hjandroiddemos.qqslidemenu.TestQQSlideMenuActivity;
 import com.huangjie.hjandroiddemos.rxjavademo.RxjavaDemoActivity;
 import com.huangjie.hjandroiddemos.service.DownloadActivity;
@@ -226,6 +227,11 @@ public class MainActivity extends BaseActivity {
     @OnClick(R.id.btn_live)
     public void btn_live() {
         LiveListActivity.actionStart(this);
+    }
+
+    @OnClick(R.id.btn_preference)
+    public void btn_preference() {
+        SettingActivity.actionStart(this);
     }
 
     private static long firstTime;

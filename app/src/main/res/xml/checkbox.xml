@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="CheckBoxPreference">
+        <CheckBoxPreference
+            android:key="checkbox_0"
+            android:summary="这是一个勾选框A"
+            android:title="CheckBoxA"/>
+        <CheckBoxPreference
+            android:key="checkbox_1"
+            android:summary="这是一个勾选框B"
+            android:title="CheckBox_B"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="EditTextPreference">
+        <EditTextPreference
+            android:defaultValue="请输入信息"
+            android:dialogTitle="输入框"
+            android:key="edit_0"
+            android:summary="请输入你的信息"
+            android:title="输入信息_A"/>
+        <EditTextPreference
+            android:defaultValue="请输入信息"
+            android:dialogTitle="输入框"
+            android:key="edit_1"
+            android:summary="请输入你的信息"
+            android:title="输入信息_B"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="ListPreference">
+        <ListPreference
+            android:dialogTitle="选择在线时间"
+            android:entries="@array/auto_logout_time_key"
+            android:entryValues="@array/auto_logout_time_value"
+            android:key="list_0"
+            android:summary="选择时间"
+            android:title="登录设置A"/>
+        <ListPreference
+            android:dialogTitle="选择在线时间"
+            android:entries="@array/auto_logout_time_key"
+            android:entryValues="@array/auto_logout_time_value"
+            android:key="list_1"
+            android:summary="选择时间"
+            android:title="登录设置A"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="RingtonePreference">
+        <RingtonePreference
+            android:key="ringtone_0"
+            android:ringtoneType="all"
+            android:showSilent="true"
+            android:summary="选择系统铃声A"
+            android:title="铃声设置"/>
+        <RingtonePreference
+            android:key="ringtone_1"
+            android:ringtoneType="all"
+            android:showSilent="true"
+            android:summary="选择系统铃声B"
+            android:title="铃声设置"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="自定义布局">
+        <Preference
+            android:key="pref_key_0"
+            android:layout="@layout/my_preference"
+            android:summary="快点点我设置我"
+            android:title="加载了一张自定义布局"/>
+        <Preference
+            android:key="pref_key_1"
+            android:layout="@layout/my_preference"
+            android:summary="快点点我设置我"
+            android:title="加载了一张自定义布局"/>
+    </PreferenceCategory>
+</PreferenceScreen>
