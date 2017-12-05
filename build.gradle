@@ -19,6 +19,20 @@ allprojects {
     }
 }
 
+ext {
+    compileSdkVersion = 23
+    buildToolsVersion = "23.0.3"
+
+    targetSdkVersion = 23
+
+    versionCode = 800400
+    versionName = "0.8.4"
+}
+
+wrapper {
+    gradleVersion = '2.14.1'
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
