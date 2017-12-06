@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.RelativeLayout;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.huangjie.hjandroiddemos.BaseActivity;
 import com.huangjie.hjandroiddemos.R;
 import com.huangjie.hjandroiddemos.utils.ToastUtils;
+import com.huangjie.ijkplayer.media.IjkVideoView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -28,6 +30,10 @@ public class LiveActivity extends BaseActivity {
     TextView tv_name;
     @BindView(R.id.tv_time)
     TextView tv_time;
+    @BindView(R.id.video_view)
+    IjkVideoView mVideoView;
+    @BindView(R.id.hud_view)
+    TableLayout mHudView;
     @BindView(R.id.rl_loading)
     RelativeLayout rl_loading;
 
@@ -47,6 +53,13 @@ public class LiveActivity extends BaseActivity {
         loggerHJ.d(gson.toJson(mLiveEntity));
         ToastUtils.showToast(gson.toJson(mLiveEntity));
         initView();
+        initPlayer();
+    }
+
+    private void initPlayer() {
+        mVideoView.setVideoPath(mLiveEntity.getUrl());
+        mVideoView.setHudView(mHudView);
+        mVideoView.start();
     }
 
     private void initView() {

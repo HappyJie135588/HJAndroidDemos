@@ -12,12 +12,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.huangjie.hjandroiddemos.R;
+import com.huangjie.hjandroiddemos.utils.MyLogger;
 import com.huangjie.hjandroiddemos.utils.ToastUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class SettingActivity extends PreferenceActivity {
+    protected static MyLogger loggerHJ = MyLogger.getHuangJie();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,11 +78,11 @@ public class SettingActivity extends PreferenceActivity {
         mEditText.setDialogIcon(R.mipmap.ic_launcher);
         //自定义布局A
         Preference preference0 = findPreference("pref_key_0");
-        preference0.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        preference0.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
-            public boolean onPreferenceClick(Preference preference) {
-                ToastUtils.showToast("自定义布局A被按下");
-                return false;
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                loggerHJ.d("自定义布局A被修改"+newValue);
+                return true;
             }
         });
         //自定义布局B
@@ -89,7 +91,7 @@ public class SettingActivity extends PreferenceActivity {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 ToastUtils.showToast("自定义布局B被按下");
-                return false;
+                return true;
             }
         });
     }

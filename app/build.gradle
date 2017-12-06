@@ -72,4 +72,5 @@ dependencies {
     compile 'com.android.support:support-vector-drawable:26.+'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
+    compile project(':ijkplayer')
 }
