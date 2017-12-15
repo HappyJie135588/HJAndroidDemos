@@ -43,7 +43,7 @@ public class LiveListActivity extends BaseActivity {
         mAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                LiveActivity.actionStart(LiveListActivity.this, (LiveEntity) adapter.getItem(position));
+                LiveActivity2.actionStart(LiveListActivity.this, (LiveEntity) adapter.getItem(position));
             }
         });
         rv_live.setAdapter(mAdapter);
@@ -51,9 +51,9 @@ public class LiveListActivity extends BaseActivity {
 
     private void initData() {
         liveList = new ArrayList<>();
-        LiveEntity liveEntityb = new LiveEntity("凤凰中文超清", "http://223.110.245.139:80/PLTV/3/224/3221226977/index.m3u8");
-        LiveEntity liveEntitya = new LiveEntity("凤凰中文超清", "http://117.144.248.49/HDhnws.m3u8?authCode=07110409322147352675&amp;stbId=006001FF0018120000060019F0D49A1&amp;Contentid=6837496099179515295&amp;mos=jbjhhzstsl&amp;livemode=1&amp;channel-id=wasusyt");
-        LiveEntity liveEntity01 = new LiveEntity("凤凰中文超清", "http://119.146.223.64:8000/group1/M00/00/02/d5LfQFohKk-AJOTdAvMx2unUbCU129.flv");
+        LiveEntity liveEntitya = new LiveEntity("新闻", "http://flv106.v1.cn/cloud/20130604/605305.flv");
+        LiveEntity liveEntityb = new LiveEntity("湖南卫视", "http://117.144.248.49/HDhnws.m3u8?authCode=07110409322147352675&amp;stbId=006001FF0018120000060019F0D49A1&amp;Contentid=6837496099179515295&amp;mos=jbjhhzstsl&amp;livemode=1&amp;channel-id=wasusyt");
+        LiveEntity liveEntity01 = new LiveEntity("凤凰中文超清", "http://223.110.245.139:80/PLTV/3/224/3221226977/index.m3u8");
         LiveEntity liveEntity02 = new LiveEntity("凤凰中文超清", "http://183.251.61.197/PLTV/88888888/224/3221225900/index.m3u8");
         LiveEntity liveEntity03 = new LiveEntity("凤凰中文超清", "http://117.169.120.142:8080/wh7f454c46tw1875988299_1988371409/ysten-businessmobile/live/fhchinese/dujuejiami.m3u8");
         LiveEntity liveEntity04 = new LiveEntity("凤凰中文超清", "http://183.251.61.207/PLTV/88888888/224/3221225900/index.m3u8");

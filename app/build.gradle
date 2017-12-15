@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.antfortune.freeline'
 
 android {
     compileSdkVersion 26
@@ -44,6 +45,9 @@ android {
             path "CMakeLists.txt"
         }
     }
+    freeline{
+        hack true
+    }
 }
 
 dependencies {
@@ -56,6 +60,7 @@ dependencies {
     /*Retrofit*/
     compile files('libs/java-websocket-1.3.0.jar')
     //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.2.0
+    compile project(':ijkplayer')
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.jakewharton:butterknife:8.7.0'
     compile 'io.reactivex:rxjava:1.0.14'
@@ -72,5 +77,8 @@ dependencies {
     compile 'com.android.support:support-vector-drawable:26.+'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
-    compile project(':ijkplayer')
+    //秒编
+    debugCompile 'com.antfortune.freeline:runtime:0.8.3'
+    releaseCompile 'com.antfortune.freeline:runtime-no-op:0.8.3'
+    testCompile 'com.antfortune.freeline:runtime-no-op:0.8.3'
 }

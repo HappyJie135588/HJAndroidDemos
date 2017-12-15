@@ -94,6 +94,8 @@
         </activity>
         <activity android:name=".preference.SettingActivity">
         </activity>
+        <activity android:name=".live.LiveActivity2">
+        </activity>
     </application>
 
 </manifest>

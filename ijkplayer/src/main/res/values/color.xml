@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="ijk_transparent_dark">#77000000</color>
+
+    <color name="color_77000000">#77000000</color>
+    <color name="color_ffffff">#ffffff</color>
 </resources>
