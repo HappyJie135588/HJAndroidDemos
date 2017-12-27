@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.antfortune.freeline'
 
 android {
     compileSdkVersion 26
@@ -45,9 +44,6 @@ android {
             path "CMakeLists.txt"
         }
     }
-    freeline{
-        hack true
-    }
 }
 
 dependencies {
@@ -77,8 +73,4 @@ dependencies {
     compile 'com.android.support:support-vector-drawable:26.+'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
-    //秒编
-    debugCompile 'com.antfortune.freeline:runtime:0.8.3'
-    releaseCompile 'com.antfortune.freeline:runtime-no-op:0.8.3'
-    testCompile 'com.antfortune.freeline:runtime-no-op:0.8.3'
 }

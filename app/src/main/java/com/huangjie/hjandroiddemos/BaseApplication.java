@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.antfortune.freeline.FreelineCore;
 import com.huangjie.hjandroiddemos.crashhandler.CrashHandler;
 import com.tencent.bugly.crashreport.CrashReport;
 
@@ -46,7 +45,6 @@ public class BaseApplication extends Application {
         mCrashHandler.init(mContext);
         //bugly
         CrashReport.initCrashReport(getApplicationContext(), "14f248c088", true);
-        FreelineCore.init(this);
     }
 
     public static Context getContext() {

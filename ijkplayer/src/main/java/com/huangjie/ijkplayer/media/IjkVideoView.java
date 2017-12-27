@@ -908,12 +908,12 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
     //-------------------------
 
     private static final int[] s_allAspectRatio = {
-            IRenderView.AR_ASPECT_FIT_PARENT,
-            IRenderView.AR_ASPECT_FILL_PARENT,
-            IRenderView.AR_ASPECT_WRAP_CONTENT,
+            IRenderView.AR_ASPECT_FIT_PARENT,//适应
+            IRenderView.AR_ASPECT_FILL_PARENT,//拉伸
+            IRenderView.AR_ASPECT_WRAP_CONTENT,//填充
             // IRenderView.AR_MATCH_PARENT,
-            IRenderView.AR_16_9_FIT_PARENT,
-            IRenderView.AR_4_3_FIT_PARENT};
+            IRenderView.AR_16_9_FIT_PARENT,//16:9
+            IRenderView.AR_4_3_FIT_PARENT};//4:3
     private int mCurrentAspectRatioIndex = 0;
     private int mCurrentAspectRatio = s_allAspectRatio[0];
 

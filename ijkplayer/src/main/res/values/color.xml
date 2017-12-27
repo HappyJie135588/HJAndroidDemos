@@ -3,5 +3,7 @@
     <color name="ijk_transparent_dark">#77000000</color>
 
     <color name="color_77000000">#77000000</color>
+    <color name="color_000000">#000000</color>
+    <color name="color_de262a3b">#de262a3b</color>
     <color name="color_ffffff">#ffffff</color>
 </resources>

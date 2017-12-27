@@ -2,19 +2,18 @@ package com.huangjie.hjandroiddemos.live;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.annotation.LayoutRes;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.BaseAdapter;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.huangjie.hjandroiddemos.BaseActivity;
 import com.huangjie.hjandroiddemos.R;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +42,7 @@ public class LiveListActivity extends BaseActivity {
         mAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                LiveActivity2.actionStart(LiveListActivity.this, (LiveEntity) adapter.getItem(position));
+                LiveActivity.actionStart(LiveListActivity.this, (LiveEntity) adapter.getItem(position));
             }
         });
         rv_live.setAdapter(mAdapter);
@@ -51,8 +50,11 @@ public class LiveListActivity extends BaseActivity {
 
     private void initData() {
         liveList = new ArrayList<>();
-        LiveEntity liveEntitya = new LiveEntity("新闻", "http://flv106.v1.cn/cloud/20130604/605305.flv");
-        LiveEntity liveEntityb = new LiveEntity("湖南卫视", "http://117.144.248.49/HDhnws.m3u8?authCode=07110409322147352675&amp;stbId=006001FF0018120000060019F0D49A1&amp;Contentid=6837496099179515295&amp;mos=jbjhhzstsl&amp;livemode=1&amp;channel-id=wasusyt");
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath()+"/SONY4K.mp4");
+        loggerHJ.d(file+"+file.exists()+"+file.exists());
+        LiveEntity liveEntityc = new LiveEntity("本地SONY4K.mp4", file.getAbsolutePath());
+        LiveEntity liveEntityb = new LiveEntity("新闻", "http://flv106.v1.cn/cloud/20130604/605305.flv");
+        LiveEntity liveEntitya = new LiveEntity("湖南卫视", "http://117.144.248.49/HDhnws.m3u8?authCode=07110409322147352675&amp;stbId=006001FF0018120000060019F0D49A1&amp;Contentid=6837496099179515295&amp;mos=jbjhhzstsl&amp;livemode=1&amp;channel-id=wasusyt");
         LiveEntity liveEntity01 = new LiveEntity("凤凰中文超清", "http://223.110.245.139:80/PLTV/3/224/3221226977/index.m3u8");
         LiveEntity liveEntity02 = new LiveEntity("凤凰中文超清", "http://183.251.61.197/PLTV/88888888/224/3221225900/index.m3u8");
         LiveEntity liveEntity03 = new LiveEntity("凤凰中文超清", "http://117.169.120.142:8080/wh7f454c46tw1875988299_1988371409/ysten-businessmobile/live/fhchinese/dujuejiami.m3u8");
@@ -195,6 +197,8 @@ public class LiveListActivity extends BaseActivity {
         LiveEntity liveEntity140 = new LiveEntity("西藏卫视", "http://117.169.120.142:8080/wh7f454c46tw1875988299_1988371409/ysten-businessmobile/live/xizangstv/dujuejiami.m3u8");
         LiveEntity liveEntity141 = new LiveEntity("云南卫视", "http://117.169.120.142:8080/wh7f454c46tw1875988299_1988371409/ysten-businessmobile/live/yunnanstv/dujuejiami.m3u8");
         LiveEntity liveEntity142 = new LiveEntity("旅游卫视", "http://117.169.120.142:8080/wh7f454c46tw1875988299_1988371409/ysten-businessmobile/live/lvyoustv/dujuejiami.m3u8");
+
+        liveList.add(liveEntityc);
         liveList.add(liveEntityb);
         liveList.add(liveEntitya);
         liveList.add(liveEntity01);

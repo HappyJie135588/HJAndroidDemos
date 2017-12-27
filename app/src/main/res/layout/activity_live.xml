@@ -1,102 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rl_root"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <com.huangjie.ijkplayer.media.IjkVideoView
-        android:id="@+id/video_view"
+    <com.huangjie.ijkplayer.media.common.MyIjkPlayer
+        android:id="@+id/my_ijk_player"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="200dp"
         android:layout_gravity="center"/>
 
-    <TableLayout
-        android:id="@+id/hud_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:background="@color/ijk_transparent_dark"
-        android:padding="8dp"/>
-
-    <RelativeLayout
-        android:id="@+id/rl_loading"
+    <LinearLayout
+        android:id="@+id/ll_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#de262a3b">
-
-        <ProgressBar
-            android:id="@+id/loading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/loading"
-            android:layout_centerHorizontal="true"
-            android:text="加载中"
-            android:textColor="#ffffff"
-            android:textSize="20sp"/>
-    </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/ll_top"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/color_444444"
-        android:orientation="horizontal"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/tv_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="返回"
-            android:textColor="@color/color_ffffff"
-            android:textSize="20dp"/>
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/tv_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="10dp"
-            android:text="湖南卫视"
-            android:textColor="@color/color_ffffff"
-            android:textSize="20dp"/>
-
-        <TextView
-            android:id="@+id/tv_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:text="系统时间"
-            android:textColor="@color/color_ffffff"
-            android:textSize="20dp"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/ll_bottom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@color/color_444444"
-        android:orientation="horizontal"
-        android:visibility="gone">
+            android:textColor="@color/color_000000"
+            android:textSize="20dp"
+            tools:text="Name"/>
 
         <TextView
-            android:id="@+id/tv_play"
+            android:id="@+id/tv_url"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:text="播放"
-            android:textColor="@color/color_ffffff"
-            android:textSize="20dp"/>
-    </LinearLayout>
+            tools:text="url"/>
 
-</RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@color/color_000000">
 
     <com.huangjie.ijkplayer.media.IjkVideoView
         android:id="@+id/video_view"
@@ -14,7 +15,7 @@
         android:id="@+id/rl_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#de262a3b">
+        android:background="@color/color_de262a3b">
 
         <ProgressBar
             android:id="@+id/pb_loading"
@@ -28,8 +29,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/pb_loading"
             android:layout_centerHorizontal="true"
-            android:text="加载中"
-            android:textColor="#ffffff"
+            android:text="加载中..."
+            android:textColor="@color/color_ffffff"
             android:textSize="20sp"/>
     </RelativeLayout>
 
@@ -50,7 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:text="返回2"
+                android:text="返回"
                 android:textColor="@color/color_ffffff"
                 android:textSize="20dp"/>
 
@@ -91,28 +92,45 @@
                 android:textColor="@color/color_ffffff"
                 android:textSize="20dp"/>
 
-            <TextView
-                android:id="@+id/tv_play_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="00:00"
-                android:textColor="@color/color_ffffff"/>
-
-            <SeekBar
-                android:id="@+id/seekbar"
+            <LinearLayout
+                android:id="@+id/ll_progress"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_weight="1"/>
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/tv_play_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="00:00"
+                    android:textColor="@color/color_ffffff"/>
+
+                <SeekBar
+                    android:id="@+id/seekbar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:id="@+id/tv_total_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="00:00"
+                    android:textColor="@color/color_ffffff"/>
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/tv_total_time"
+                android:id="@+id/tv_turn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:text="00:00"
-                android:textColor="@color/color_ffffff"/>
+                android:text="切换"
+                android:textColor="@color/color_ffffff"
+                android:textSize="20dp"/>
 
             <TextView
                 android:id="@+id/tv_full"

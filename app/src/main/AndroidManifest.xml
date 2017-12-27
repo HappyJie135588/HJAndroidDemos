@@ -88,13 +88,12 @@
         </activity>
         <activity android:name=".live.LiveListActivity">
         </activity>
-        <activity
-            android:name=".live.LiveActivity"
-            android:screenOrientation="landscape">
-        </activity>
         <activity android:name=".preference.SettingActivity">
         </activity>
-        <activity android:name=".live.LiveActivity2">
+        <activity
+            android:name=".live.LiveActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize">
         </activity>
     </application>
 
