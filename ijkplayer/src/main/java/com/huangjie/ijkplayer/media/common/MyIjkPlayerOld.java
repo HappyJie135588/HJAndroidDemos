@@ -8,7 +8,6 @@ import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -46,21 +45,15 @@ import static com.huangjie.ijkplayer.media.utils.TimeUtils.stringForTime;
  * Created by HuangJie on 2017/12/12.
  */
 
-public class MyIjkPlayer extends FrameLayout {
+public class MyIjkPlayerOld extends FrameLayout {
     public static final String TAG = "MyIjkPlayer";
-    private static final int TIME_MESSAGE_WHAT = 0;
-    private static final int HIDE_CONTROLLER_MESSAGE_WHAT = 1;
-    private static final int PRO_MESSAGE_WHAT = 2;
-    private static final int CLICK_MESSAGE_WHAT = 3;
-
+    private Handler mHandler = new Handler(Looper.getMainLooper());
     private static final int RETRY_TIMES = 5;//重试次数
     private int mCount = 0;//错误次数
     private int duration;//视频长度
     private static final int AUTO_HIDE_TIME = 500000;//自动隐藏播放控制器时间
-    private static final int CLICK_DELAY_TIME = 200;//点击延迟时间
     private int initHeight;//记录播放器的高度
     private String[] sizeStr = new String[]{"适应", "拉伸", "填充", "铺满", "16:9", "4:3"};//画面尺寸
-    private long clickTime;//点击时间
 
     private Context mContext;
 
@@ -88,15 +81,15 @@ public class MyIjkPlayer extends FrameLayout {
 
     private String url;
 
-    public MyIjkPlayer(@NonNull Context context) {
+    public MyIjkPlayerOld(@NonNull Context context) {
         this(context, null);
     }
 
-    public MyIjkPlayer(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public MyIjkPlayerOld(@NonNull Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public MyIjkPlayer(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
+    public MyIjkPlayerOld(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.mContext = context;
         initView();
@@ -129,56 +122,12 @@ public class MyIjkPlayer extends FrameLayout {
         tv_title.setText(title);
     }
 
-    private Handler mHandler = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                //更新时间显示的任务
-                case TIME_MESSAGE_WHAT:
-                    long currentTime = System.currentTimeMillis();
-                    String time = mDateFormat.format(new Date(currentTime));
-                    Log.d(TAG, "当前时间:" + time);
-                    tv_time.setText(time);
-                    //因不能监听导航栏的显示和隐藏,定时获取屏幕的宽度设置播放控制器的宽度
-                    ViewGroup.LayoutParams params = fl_controller.getLayoutParams();
-                    params.width = getScreenWidth();
-                    mHandler.sendEmptyMessageDelayed(TIME_MESSAGE_WHAT, 1000 - (currentTime % 1000));
-                    break;
-                //定时隐藏播放控制器的任务
-                case HIDE_CONTROLLER_MESSAGE_WHAT:
-                    hideController();
-                    break;
-                //更新播放进度的任务
-                case PRO_MESSAGE_WHAT:
-                    int position = mVideoView.getCurrentPosition();
-                    if (duration > 0) {
-                        seekbar.setProgress(position);
-                    }
-                    int percent = mVideoView.getBufferPercentage();
-                    seekbar.setSecondaryProgress(percent);
-                    mHandler.sendEmptyMessageDelayed(PRO_MESSAGE_WHAT, 1000 - (position % 1000));
-                    break;
-                //点击显示隐藏播放控制器的任务
-                case CLICK_MESSAGE_WHAT:
-                    if (fl_controller.getVisibility() == VISIBLE) {
-                        hideController();
-                        //移除自动隐藏控制器任务
-                        mHandler.removeMessages(HIDE_CONTROLLER_MESSAGE_WHAT);
-                    } else {
-                        showController();
-                    }
-                    break;
-            }
-        }
-    };
-
     private void initInfo() {
         //设置状态栏透明
         setImmerseLayout(ll_top);
         fl_controller.setVisibility(GONE);
         //开启时间显示任务
-        mHandler.sendEmptyMessage(TIME_MESSAGE_WHAT);
+        mHandler.post(timeTask);
         //获取记录播放器的高度
         ViewTreeObserver vto = getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -189,25 +138,16 @@ public class MyIjkPlayer extends FrameLayout {
                 Log.d(TAG, "播放器的高度: initHeight=" + initHeight);
             }
         });
-
         this.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (clickTime + CLICK_DELAY_TIME > System.currentTimeMillis()) {
-                    //双击播放暂停
-                    if (mVideoView.isPlaying()) {
-                        mVideoView.pause();
-                        tv_play.setText("播放");
-                    } else {
-                        mVideoView.start();
-                        tv_play.setText("暂停");
-                    }
-                    mHandler.removeMessages(CLICK_MESSAGE_WHAT);
+                if (fl_controller.getVisibility() == VISIBLE) {
+                    hideController();
+                    //移除自动隐藏控制器任务
+                    mHandler.removeCallbacks(hideControllerTask);
                 } else {
-                    //单击
-                    mHandler.sendEmptyMessageDelayed(CLICK_MESSAGE_WHAT, CLICK_DELAY_TIME);
+                    showController();
                 }
-                clickTime = System.currentTimeMillis();
             }
         });
         //返回按钮监听
@@ -240,7 +180,7 @@ public class MyIjkPlayer extends FrameLayout {
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
                 //停止更新播放进度
-                mHandler.removeMessages(PRO_MESSAGE_WHAT);
+                mHandler.removeCallbacks(proTask);
             }
 
             @Override
@@ -249,7 +189,7 @@ public class MyIjkPlayer extends FrameLayout {
                 Log.d(TAG, "时间跳转: " + stringForTime(time));
                 mVideoView.seekTo(time);
                 //重新开始更新播放进度
-                mHandler.sendEmptyMessage(PRO_MESSAGE_WHAT);
+                mHandler.post(proTask);
             }
         });
         tv_turn.setText(sizeStr[0]);
@@ -273,35 +213,33 @@ public class MyIjkPlayer extends FrameLayout {
     //显示控制界面
     private void showController() {
         fl_controller.setVisibility(VISIBLE);
-        mHandler.sendEmptyMessage(TIME_MESSAGE_WHAT);
-        mHandler.sendEmptyMessageDelayed(HIDE_CONTROLLER_MESSAGE_WHAT, AUTO_HIDE_TIME);
+        mHandler.post(timeTask);
+        mHandler.postDelayed(hideControllerTask, AUTO_HIDE_TIME);
         setSystemUIVisible(true);
     }
 
     //显示隐藏状态栏和导航栏
     private void setSystemUIVisible(boolean show) {
-        int uiFlags = -1;
         if (show) {
-            //显示状态栏和导航栏
-            uiFlags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+            int uiFlags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+            uiFlags |= 0x00001000;
+            ((Activity) mContext).getWindow().getDecorView().setSystemUiVisibility(uiFlags);
         } else {
-            if (getScreenOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-                //全屏隐藏状态栏和导航栏
-                uiFlags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.INVISIBLE;
-            } else {
-                //非全屏只隐藏状态栏
-                uiFlags = View.INVISIBLE;
-            }
+            int uiFlags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN;
+            uiFlags |= 0x00001000;
+            ((Activity) mContext).getWindow().getDecorView().setSystemUiVisibility(uiFlags);
         }
-        uiFlags |= 0x00001000;
-        ((Activity) mContext).getWindow().getDecorView().setSystemUiVisibility(uiFlags);
     }
 
     //隐藏控制界面
     private void hideController() {
         fl_controller.setVisibility(GONE);
         fl_controller.setPadding(0, 0, 0, 0);
-        mHandler.removeMessages(TIME_MESSAGE_WHAT);
+        mHandler.removeCallbacks(timeTask);
         setSystemUIVisible(false);
     }
 
@@ -318,21 +256,21 @@ public class MyIjkPlayer extends FrameLayout {
         }
     }
 
-    /**
-     * 全屏切换
-     */
-    public void toggleFullScreen() {
+    //全屏切换
+    private void toggleFullScreen() {
         ViewGroup.LayoutParams lp = getLayoutParams();
-        if (getScreenOrientation() == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-            ((Activity) mContext).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-            ((Activity) mContext).getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-            tv_full.setText("半屏");
-            lp.height = LayoutParams.MATCH_PARENT;
-        } else {
+        if (getScreenOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
             ((Activity) mContext).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            ((Activity) mContext).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             tv_full.setText("全屏");
             lp.height = initHeight;
+            ((Activity) mContext).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+            ((Activity) mContext).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        } else {
+            ((Activity) mContext).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            tv_full.setText("半屏");
+            lp.height = LayoutParams.MATCH_PARENT;
+            ((Activity) mContext).getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+            ((Activity) mContext).getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         }
         setLayoutParams(lp);
         //隐藏控制界面
@@ -341,6 +279,7 @@ public class MyIjkPlayer extends FrameLayout {
 
     /**
      * 获取界面方向
+     * 拷贝的看不懂
      */
     public int getScreenOrientation() {
         int rotation = ((Activity) mContext).getWindowManager().getDefaultDisplay().getRotation();
@@ -395,6 +334,41 @@ public class MyIjkPlayer extends FrameLayout {
 
     //文件日期格式
     private DateFormat mDateFormat = new SimpleDateFormat("HH:mm:ss");
+    //更新时间显示的任务
+    private Runnable timeTask = new Runnable() {
+        @Override
+        public void run() {
+            final long currentTime = System.currentTimeMillis();
+            String time = mDateFormat.format(new Date(currentTime));
+            Log.d(TAG, "当前时间:" + time);
+            tv_time.setText(time);
+            //因不能监听导航栏的显示和隐藏,定时获取屏幕的宽度设置播放控制器的宽度
+            ViewGroup.LayoutParams params = fl_controller.getLayoutParams();
+            params.width = getScreenWidth();
+            mHandler.postDelayed(this, 1000 - (currentTime % 1000));
+        }
+    };
+    //定时隐藏播放控制器的任务
+    private Runnable hideControllerTask = new Runnable() {
+        @Override
+        public void run() {
+            hideController();
+        }
+    };
+
+    //更新播放进度的任务
+    private Runnable proTask = new Runnable() {
+        @Override
+        public void run() {
+            int position = mVideoView.getCurrentPosition();
+            if (duration > 0) {
+                seekbar.setProgress(position);
+            }
+            int percent = mVideoView.getBufferPercentage();
+            seekbar.setSecondaryProgress(percent);
+            mHandler.postDelayed(this, 1000 - (position % 1000));
+        }
+    };
 
     public void setUrl(String url) {
         this.url = url;
@@ -428,7 +402,7 @@ public class MyIjkPlayer extends FrameLayout {
                     ll_progress.setVisibility(VISIBLE);
                     seekbar.setMax(duration);
                     tv_total_time.setText(stringForTime(duration));
-                    mHandler.sendEmptyMessage(PRO_MESSAGE_WHAT);
+                    mHandler.post(proTask);
                 } else {
                     //视频长度为0隐藏seekbar
                     ll_progress.setVisibility(INVISIBLE);
@@ -440,9 +414,8 @@ public class MyIjkPlayer extends FrameLayout {
             @Override
             public void onCompletion(IMediaPlayer iMediaPlayer) {
                 Log.d(TAG, "onCompletion: 播放完毕");
-                tv_play.setText("停止");
                 //移除更新播放进度的任务
-                mHandler.removeMessages(PRO_MESSAGE_WHAT);
+                mHandler.removeCallbacks(proTask);
             }
         });
         mVideoView.setOnErrorListener(new IMediaPlayer.OnErrorListener() {
@@ -524,9 +497,9 @@ public class MyIjkPlayer extends FrameLayout {
     public void onRestart() {
         mVideoView.start();
         //重新开始更新时间显示的任务
-        mHandler.sendEmptyMessage(TIME_MESSAGE_WHAT);
+        mHandler.post(timeTask);
         //移除更新播放进度的任务
-        mHandler.sendEmptyMessage(PRO_MESSAGE_WHAT);
+        mHandler.post(proTask);
     }
 
     //暂停播放
@@ -534,9 +507,9 @@ public class MyIjkPlayer extends FrameLayout {
         Log.d(TAG, "onStop: 暂停播放");
         mVideoView.pause();
         //移除更新时间显示的任务
-        mHandler.removeMessages(TIME_MESSAGE_WHAT);
+        mHandler.removeCallbacks(timeTask);
         //移除更新播放进度的任务
-        mHandler.removeMessages(PRO_MESSAGE_WHAT);
+        mHandler.removeCallbacks(proTask);
     }
 
     //停止播放
@@ -579,4 +552,6 @@ public class MyIjkPlayer extends FrameLayout {
         display.getMetrics(metrics);
         return metrics.widthPixels;
     }
+
+
 }

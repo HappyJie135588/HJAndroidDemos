@@ -2,8 +2,12 @@ package com.huangjie.hjandroiddemos.live;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.OrientationEventListener;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -30,7 +34,6 @@ public class LiveActivity extends BaseActivity {
         loggerHJ.d(gson.toJson(mLiveEntity));
         ToastUtils.showToast(gson.toJson(mLiveEntity));
         initPlayer();
-        setImmerseLayout();
     }
 
     public static void actionStart(Activity activity, LiveEntity liveEntity) {
@@ -79,12 +82,5 @@ public class LiveActivity extends BaseActivity {
         super.onDestroy();
         loggerHJ.d("onDestroy");
         my_ijk_player.onDestroy();
-    }
-
-    protected void setImmerseLayout() {// view为标题栏
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
     }
 }
