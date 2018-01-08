@@ -2,14 +2,7 @@ package com.huangjie.hjandroiddemos.live;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.OrientationEventListener;
-import android.view.Window;
-import android.view.WindowManager;
 
 import com.huangjie.hjandroiddemos.BaseActivity;
 import com.huangjie.hjandroiddemos.R;

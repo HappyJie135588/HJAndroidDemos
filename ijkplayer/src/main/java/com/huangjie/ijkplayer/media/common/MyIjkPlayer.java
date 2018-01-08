@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -17,6 +18,8 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,12 +33,14 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.huangjie.ijkplayer.R;
+import com.huangjie.ijkplayer.media.IRenderView;
 import com.huangjie.ijkplayer.media.IjkVideoView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import master.flame.danmaku.ui.widget.DanmakuView;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
@@ -51,20 +56,36 @@ public class MyIjkPlayer extends FrameLayout {
     private static final int TIME_MESSAGE_WHAT = 0;
     private static final int HIDE_CONTROLLER_MESSAGE_WHAT = 1;
     private static final int PRO_MESSAGE_WHAT = 2;
-    private static final int CLICK_MESSAGE_WHAT = 3;
 
     private static final int RETRY_TIMES = 5;//重试次数
     private int mCount = 0;//错误次数
     private int duration;//视频长度
-    private static final int AUTO_HIDE_TIME = 500000;//自动隐藏播放控制器时间
-    private static final int CLICK_DELAY_TIME = 200;//点击延迟时间
+    private static final int AUTO_HIDE_TIME = 50000;//自动隐藏播放控制器时间
     private int initHeight;//记录播放器的高度
     private String[] sizeStr = new String[]{"适应", "拉伸", "填充", "铺满", "16:9", "4:3"};//画面尺寸
     private long clickTime;//点击时间
+    private GestureDetector mGestureDetector;
+    private boolean islocked;
+    private boolean isLive;
+    //滑动进度条得到的新位置，和当前播放位置是有区别的,newPosition =0也会调用设置的，故初始化值为-1
+    private int newPosition = -1;
+    //当前亮度大小
+    private float brightness;
+    //当前声音大小
+    private int volume;
+    //设备最大音量
+    private int mMaxVolume;
+    //音频管理器
+    private AudioManager audioManager;
+
+    //视频旋转的角度，默认只有0,90.270分别对应向上、向左、向右三个方向
+    private int rotation = 0;
 
     private Context mContext;
+    private Activity mActivity;
 
     private IjkVideoView mVideoView;
+    private DanmakuView mDanmakuView;
     private MyIjkPlayerListener mMyIjkPlayerListener;
 
     private RelativeLayout rl_loading;
@@ -72,17 +93,37 @@ public class MyIjkPlayer extends FrameLayout {
     private TextView tv_loading;
 
     private FrameLayout fl_controller;//播放控制器
+    //顶部播放控制器
     private LinearLayout ll_top;
     private TextView tv_back;
     private TextView tv_title;
     private TextView tv_time;
-
+    //锁
+    private TextView tv_lock;
+    //滑动进度
+    private RelativeLayout rl_scroll_progress;
+    private TextView tv_scroll_time;
+    private TextView tv_scroll_target;
+    private TextView tv_scroll_total;
+    //亮度设置
+    private RelativeLayout rl_bright;
+    private TextView tv_bright;
+    private SeekBar sb_bright;
+    //音量设置
+    private RelativeLayout rl_volume;
+    private TextView tv_volume;
+    private SeekBar sb_volume;
+    //底部播放控制器
     private LinearLayout ll_bottom;
-    private TextView tv_play;
-    private LinearLayout ll_progress;
-    private TextView tv_play_time;
     private SeekBar seekbar;
+    private TextView tv_play;
+    private TextView tv_play_time;
     private TextView tv_total_time;
+    //弹幕控制
+    private LinearLayout ll_dm;
+    private TextView tv_dm_turn;
+    private TextView tv_dm_setting;
+    private TextView tv_dm_send;
     private TextView tv_turn;
     private TextView tv_full;
 
@@ -99,6 +140,7 @@ public class MyIjkPlayer extends FrameLayout {
     public MyIjkPlayer(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.mContext = context;
+        this.mActivity = (Activity) context;
         initView();
         initInfo();
         initPlayer();
@@ -107,6 +149,7 @@ public class MyIjkPlayer extends FrameLayout {
     private void initView() {
         View.inflate(mContext, R.layout.default_player, this);
         mVideoView = findViewById(R.id.video_view);
+        mDanmakuView = findViewById(R.id.danmaku);
         rl_loading = findViewById(R.id.rl_loading);
         pb_loading = findViewById(R.id.pb_loading);
         tv_loading = findViewById(R.id.tv_loading);
@@ -115,12 +158,26 @@ public class MyIjkPlayer extends FrameLayout {
         tv_back = findViewById(R.id.tv_back);
         tv_title = findViewById(R.id.tv_title);
         tv_time = findViewById(R.id.tv_time);
+        tv_lock = findViewById(R.id.tv_lock);
+        rl_scroll_progress = findViewById(R.id.rl_scroll_progress);
+        tv_scroll_time = findViewById(R.id.tv_scroll_time);
+        tv_scroll_target = findViewById(R.id.tv_scroll_target);
+        tv_scroll_total = findViewById(R.id.tv_scroll_total);
+        rl_bright = findViewById(R.id.rl_bright);
+        tv_bright = findViewById(R.id.tv_bright);
+        sb_bright = findViewById(R.id.sb_bright);
+        rl_volume = findViewById(R.id.rl_volume);
+        tv_volume = findViewById(R.id.tv_volume);
+        sb_volume = findViewById(R.id.sb_volume);
         ll_bottom = findViewById(R.id.ll_bottom);
-        tv_play = findViewById(R.id.tv_play);
-        ll_progress = findViewById(R.id.ll_progress);
-        tv_play_time = findViewById(R.id.tv_play_time);
         seekbar = findViewById(R.id.seekbar);
+        tv_play = findViewById(R.id.tv_play);
+        tv_play_time = findViewById(R.id.tv_play_time);
         tv_total_time = findViewById(R.id.tv_total_time);
+        ll_dm = findViewById(R.id.ll_dm);
+        tv_dm_turn = findViewById(R.id.tv_dm_turn);
+        tv_dm_setting = findViewById(R.id.tv_dm_setting);
+        tv_dm_send = findViewById(R.id.tv_dm_send);
         tv_turn = findViewById(R.id.tv_turn);
         tv_full = findViewById(R.id.tv_full);
     }
@@ -152,22 +209,15 @@ public class MyIjkPlayer extends FrameLayout {
                 //更新播放进度的任务
                 case PRO_MESSAGE_WHAT:
                     int position = mVideoView.getCurrentPosition();
-                    if (duration > 0) {
-                        seekbar.setProgress(position);
-                    }
-                    int percent = mVideoView.getBufferPercentage();
-                    seekbar.setSecondaryProgress(percent);
-                    mHandler.sendEmptyMessageDelayed(PRO_MESSAGE_WHAT, 1000 - (position % 1000));
-                    break;
-                //点击显示隐藏播放控制器的任务
-                case CLICK_MESSAGE_WHAT:
-                    if (fl_controller.getVisibility() == VISIBLE) {
-                        hideController();
-                        //移除自动隐藏控制器任务
-                        mHandler.removeMessages(HIDE_CONTROLLER_MESSAGE_WHAT);
+                    if (isLive) {
+                        Log.d(TAG, "直播时间: " + stringForTime(position));
+                        tv_play_time.setText(stringForTime(position));
                     } else {
-                        showController();
+                        seekbar.setProgress(position);
+                        int percent = mVideoView.getBufferPercentage();
+                        seekbar.setSecondaryProgress(percent);
                     }
+                    mHandler.sendEmptyMessageDelayed(PRO_MESSAGE_WHAT, 1000 - (position % 1000));
                     break;
             }
         }
@@ -176,7 +226,6 @@ public class MyIjkPlayer extends FrameLayout {
     private void initInfo() {
         //设置状态栏透明
         setImmerseLayout(ll_top);
-        fl_controller.setVisibility(GONE);
         //开启时间显示任务
         mHandler.sendEmptyMessage(TIME_MESSAGE_WHAT);
         //获取记录播放器的高度
@@ -189,27 +238,43 @@ public class MyIjkPlayer extends FrameLayout {
                 Log.d(TAG, "播放器的高度: initHeight=" + initHeight);
             }
         });
-
-        this.setOnClickListener(new View.OnClickListener() {
+        audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
+        mMaxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        //添加手势控制
+        mGestureDetector = new GestureDetector(mContext, new PlayerGestureListener());
+        this.setOnTouchListener(new OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                if (clickTime + CLICK_DELAY_TIME > System.currentTimeMillis()) {
-                    //双击播放暂停
-                    if (mVideoView.isPlaying()) {
-                        mVideoView.pause();
-                        tv_play.setText("播放");
-                    } else {
-                        mVideoView.start();
-                        tv_play.setText("暂停");
+            public boolean onTouch(View v, MotionEvent event) {
+                mGestureDetector.onTouchEvent(event);
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    //手势结束
+                    Log.d(TAG, "onTouch: 手势结束");
+                    if (brightness >= 0) {
+                        brightness = -1f;
+                        rl_bright.setVisibility(GONE);
                     }
-                    mHandler.removeMessages(CLICK_MESSAGE_WHAT);
-                } else {
-                    //单击
-                    mHandler.sendEmptyMessageDelayed(CLICK_MESSAGE_WHAT, CLICK_DELAY_TIME);
+                    if (volume >= 0) {
+                        volume = -1;
+                        rl_volume.setVisibility(GONE);
+                    }
+                    if (newPosition >= 0) {
+                        //滑动进度设置完毕
+                        //隐藏滑动进度界面
+                        rl_scroll_progress.setVisibility(GONE);
+                        //启动定时隐藏控制器
+                        mHandler.sendEmptyMessageDelayed(HIDE_CONTROLLER_MESSAGE_WHAT, AUTO_HIDE_TIME);
+                        Log.d(TAG, "时间滑动: " + stringForTime(newPosition));
+                        mVideoView.seekTo(newPosition);
+                        //重新开始更新播放进度
+                        mHandler.sendEmptyMessage(PRO_MESSAGE_WHAT);
+                        //初始化滑动参数
+                        newPosition = -1;
+                    }
                 }
-                clickTime = System.currentTimeMillis();
+                return true;
             }
         });
+        this.setLongClickable(true);
         //返回按钮监听
         tv_back.setOnClickListener(new OnClickListener() {
             @Override
@@ -217,23 +282,40 @@ public class MyIjkPlayer extends FrameLayout {
                 backClick();
             }
         });
-
+        tv_lock.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                turnLock();
+            }
+        });
         tv_play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mVideoView.isPlaying()) {
-                    mVideoView.pause();
-                    tv_play.setText("播放");
-                } else {
-                    mVideoView.start();
-                    tv_play.setText("暂停");
-                }
+                turnPlayPause();
+            }
+        });
+        tv_dm_turn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        tv_dm_setting.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        tv_dm_send.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                Log.d(TAG, "时间进度: " + stringForTime(progress));
+                Log.d(TAG, "点播时间: " + stringForTime(progress));
                 tv_play_time.setText(stringForTime(progress));
             }
 
@@ -270,11 +352,35 @@ public class MyIjkPlayer extends FrameLayout {
         });
     }
 
+    //锁定打开
+    private void turnLock() {
+        if (islocked) {
+            //锁开
+            tv_lock.setText("打开");
+            islocked = false;
+        } else {
+            //锁上
+            tv_lock.setText("锁住");
+            islocked = true;
+        }
+    }
+
+    //切换播放暂停
+    private void turnPlayPause() {
+        if (mVideoView.isPlaying()) {
+            mVideoView.pause();
+            tv_play.setText("播放");
+        } else {
+            mVideoView.start();
+            tv_play.setText("暂停");
+        }
+    }
+
     //显示控制界面
     private void showController() {
         fl_controller.setVisibility(VISIBLE);
         mHandler.sendEmptyMessage(TIME_MESSAGE_WHAT);
-        mHandler.sendEmptyMessageDelayed(HIDE_CONTROLLER_MESSAGE_WHAT, AUTO_HIDE_TIME);
+        mHandler.sendEmptyMessage(PRO_MESSAGE_WHAT);
         setSystemUIVisible(true);
     }
 
@@ -294,7 +400,7 @@ public class MyIjkPlayer extends FrameLayout {
             }
         }
         uiFlags |= 0x00001000;
-        ((Activity) mContext).getWindow().getDecorView().setSystemUiVisibility(uiFlags);
+        mActivity.getWindow().getDecorView().setSystemUiVisibility(uiFlags);
     }
 
     //隐藏控制界面
@@ -302,6 +408,7 @@ public class MyIjkPlayer extends FrameLayout {
         fl_controller.setVisibility(GONE);
         fl_controller.setPadding(0, 0, 0, 0);
         mHandler.removeMessages(TIME_MESSAGE_WHAT);
+        mHandler.removeMessages(PRO_MESSAGE_WHAT);
         setSystemUIVisible(false);
     }
 
@@ -324,28 +431,33 @@ public class MyIjkPlayer extends FrameLayout {
     public void toggleFullScreen() {
         ViewGroup.LayoutParams lp = getLayoutParams();
         if (getScreenOrientation() == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-            ((Activity) mContext).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-            ((Activity) mContext).getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+            mActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             tv_full.setText("半屏");
+            //竖屏隐藏弹幕控制
+            ll_dm.setVisibility(VISIBLE);
             lp.height = LayoutParams.MATCH_PARENT;
+
         } else {
-            ((Activity) mContext).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            ((Activity) mContext).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            mActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
             tv_full.setText("全屏");
+            //全屏显示弹幕控制
+            ll_dm.setVisibility(INVISIBLE);
             lp.height = initHeight;
         }
         setLayoutParams(lp);
         //隐藏控制界面
-        hideController();
+        //hideController();
     }
 
     /**
      * 获取界面方向
      */
     public int getScreenOrientation() {
-        int rotation = ((Activity) mContext).getWindowManager().getDefaultDisplay().getRotation();
+        int rotation = mActivity.getWindowManager().getDefaultDisplay().getRotation();
         DisplayMetrics dm = new DisplayMetrics();
-        ((Activity) mContext).getWindowManager().getDefaultDisplay().getMetrics(dm);
+        mActivity.getWindowManager().getDefaultDisplay().getMetrics(dm);
         int width = dm.widthPixels;
         int height = dm.heightPixels;
         int orientation;
@@ -415,7 +527,7 @@ public class MyIjkPlayer extends FrameLayout {
             @Override
             public void onPrepared(IMediaPlayer iMediaPlayer) {
                 Log.d(TAG, "onPrepared: 准备播放");
-                rl_loading.setVisibility(View.GONE);
+                rl_loading.setVisibility(GONE);
                 //开始播放可以设置播放速度
                 mVideoView.start();
                 //错误重试次数置零
@@ -424,15 +536,24 @@ public class MyIjkPlayer extends FrameLayout {
                 //获取视频长度
                 duration = mVideoView.getDuration();
                 if (duration > 0) {
+                    isLive = false;
                     //显示seekbar启动播放进度更新
-                    ll_progress.setVisibility(VISIBLE);
+                    seekbar.setVisibility(VISIBLE);
+                    tv_total_time.setVisibility(VISIBLE);
                     seekbar.setMax(duration);
-                    tv_total_time.setText(stringForTime(duration));
-                    mHandler.sendEmptyMessage(PRO_MESSAGE_WHAT);
+                    tv_total_time.setText("/" + stringForTime(duration));
+                    //设置滑动进度总时间
+                    tv_scroll_total.setText(stringForTime(duration));
                 } else {
+                    isLive = true;
                     //视频长度为0隐藏seekbar
-                    ll_progress.setVisibility(INVISIBLE);
+                    seekbar.setVisibility(GONE);
+                    tv_total_time.setVisibility(GONE);
                 }
+                //开始更新播放时间的任务
+                mHandler.sendEmptyMessage(PRO_MESSAGE_WHAT);
+                //开始播放隐藏播放控制器
+                hideController();
             }
         });
         //播放完毕
@@ -556,7 +677,7 @@ public class MyIjkPlayer extends FrameLayout {
     //设置状态栏透明
     protected void setImmerseLayout(View view) {// view为标题栏
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            ((Activity) mContext).getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            mActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             int statusBarHeight = getStatusBarHeight(mContext);
             view.setPadding(0, statusBarHeight, 0, 0);
         }
@@ -574,9 +695,176 @@ public class MyIjkPlayer extends FrameLayout {
     }
 
     private int getScreenWidth() {
-        Display display = ((Activity) mContext).getWindowManager().getDefaultDisplay();
+        Display display = mActivity.getWindowManager().getDefaultDisplay();
         DisplayMetrics metrics = new DisplayMetrics();
         display.getMetrics(metrics);
         return metrics.widthPixels;
     }
+
+    //播放器的手势监听
+    public class PlayerGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        //是否是按下的标识，默认为其他动作，true为按下标识，false为其他动作
+        private boolean isDownTouch;
+        //是否声音控制,默认为亮度控制，true为声音控制，false为亮度控制
+        private boolean isVolume;
+        //是否横向滑动，默认为纵向滑动，true为横向滑动，false为纵向滑动
+        private boolean isLandscape;
+
+        //按下
+        @Override
+        public boolean onDown(MotionEvent e) {
+            Log.d(TAG, "onDown: ");
+            isDownTouch = true;
+            return true;
+        }
+
+        //单击
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            Log.d(TAG, "onSingleTapConfirmed: 单击");
+            if (fl_controller.getVisibility() == VISIBLE) {
+                hideController();
+                //移除自动隐藏控制器任务
+                mHandler.removeMessages(HIDE_CONTROLLER_MESSAGE_WHAT);
+            } else {
+                showController();
+                mHandler.sendEmptyMessageDelayed(HIDE_CONTROLLER_MESSAGE_WHAT, AUTO_HIDE_TIME);
+            }
+            return true;
+        }
+
+        //双击
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            Log.d(TAG, "onDoubleTap: 双击");
+            //双击播放暂停
+            turnPlayPause();
+            return true;
+        }
+
+        //长按
+        @Override
+        public void onLongPress(MotionEvent e) {
+            Log.d(TAG, "onLongPress: 长按");
+            turnLock();
+        }
+
+        //滑动
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            Log.d(TAG, "onScroll: 滑动");
+            if (!islocked) {
+                float mOldX = e1.getX(), mOldY = e1.getY();
+                float deltaY = mOldY - e2.getY();
+                float deltaX = mOldX - e2.getX();
+                if (isDownTouch) {
+                    isLandscape = Math.abs(distanceX) >= Math.abs(distanceY);
+                    isVolume = mOldX > getWidth() * 0.5f;
+                    if (isLandscape) {
+                        if (!isLive) {
+                            /**进度设置*/
+                            //停止更新播放进度
+                            showController();
+                            mHandler.removeMessages(PRO_MESSAGE_WHAT);
+                            rl_scroll_progress.setVisibility(VISIBLE);
+                        }
+                    } else {
+                        if (isVolume) {
+                            /**声音设置*/
+                            rl_volume.setVisibility(VISIBLE);
+                        } else {
+                            /**亮度设置*/
+                            rl_bright.setVisibility(VISIBLE);
+                        }
+                    }
+                    isDownTouch = false;
+                }
+
+                if (isLandscape) {
+                    if (!isLive) {
+                        Log.d(TAG, "onScroll: 进度设置");
+                        /**进度设置*/
+                        onProgressSlide(-deltaX / getWidth());
+                    }
+                } else {
+                    float percent = deltaY / getHeight();
+                    if (isVolume) {
+                        Log.d(TAG, "onScroll: 声音设置");
+                        /**声音设置*/
+                        onVolumeSlide(percent);
+                    } else {
+                        Log.d(TAG, "onScroll: 亮度设置");
+                        /**亮度设置*/
+                        onBrightnessSlide(percent);
+                    }
+                }
+            }
+            return true;
+        }
+
+    }
+
+    //快进或者快退滑动改变进度
+    private void onProgressSlide(float percent) {
+        int position = mVideoView.getCurrentPosition();
+        //可滑动最大时间长度为100秒
+        int deltaMax = Math.min(100 * 1000, duration - position);
+        //实际滑动长度
+        int delta = (int) (deltaMax * percent);
+        //滑动后的播放位置时间
+        newPosition = delta + position;
+        if (newPosition > duration) {
+            newPosition = duration;
+        } else if (newPosition <= 0) {
+            newPosition = 0;
+            //限制最小滑动时间大于已播放时间
+            delta = -position;
+        }
+        //滑动时间长度 单位:秒
+        int showDelta = delta / 1000;
+        if (showDelta != 0) {
+            String text = showDelta > 0 ? ("+" + showDelta) : "" + showDelta;
+            tv_scroll_time.setText(text + "s");
+            tv_scroll_target.setText(stringForTime(newPosition) + "/");
+            Log.d(TAG, "滑动进度: " + stringForTime(newPosition));
+            //设置滑动后的进度
+            seekbar.setProgress(newPosition);
+        }
+    }
+
+    //亮度滑动改变亮度
+    private void onBrightnessSlide(float percent) {
+        if (brightness < 0) {
+            brightness = mActivity.getWindow().getAttributes().screenBrightness;
+            Log.d(TAG, "brightness:" + brightness + ",percent:" + percent);
+        }
+        WindowManager.LayoutParams lpa = mActivity.getWindow().getAttributes();
+        lpa.screenBrightness = brightness + percent;
+        if (lpa.screenBrightness > 1.0f) {
+            lpa.screenBrightness = 1.0f;
+        } else if (lpa.screenBrightness < 0.01f) {
+            lpa.screenBrightness = 0.01f;
+        }
+        sb_bright.setProgress((int) (lpa.screenBrightness * 100 + 0.5f));
+        mActivity.getWindow().setAttributes(lpa);
+    }
+
+    //滑动改变声音大小
+    private void onVolumeSlide(float percent) {
+        if (volume == -1) {
+            volume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+            Log.d(TAG, "volume:" + volume + ",percent:" + percent);
+        }
+        int index = (int) (percent * mMaxVolume + 0.5f) + volume;
+        if (index > mMaxVolume)
+            index = mMaxVolume;
+        else if (index < 0)
+            index = 0;
+        // 显示
+        sb_volume.setProgress(index * 100 / mMaxVolume);
+        // 变更声音
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, index, 0);
+    }
+
 }

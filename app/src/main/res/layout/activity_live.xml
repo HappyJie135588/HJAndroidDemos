@@ -16,6 +16,7 @@
         android:id="@+id/ll_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/color_00ffff"
         android:orientation="vertical">
 
         <TextView
@@ -25,14 +26,15 @@
             android:padding="10dp"
             android:textColor="@color/color_000000"
             android:textSize="20dp"
-            tools:text="Name"/>
+            android:text="Name"/>
 
         <TextView
             android:id="@+id/tv_url"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/color_000000"
             android:padding="10dp"
-            tools:text="url"/>
+            android:text="url"/>
 
     </LinearLayout>
 </LinearLayout>

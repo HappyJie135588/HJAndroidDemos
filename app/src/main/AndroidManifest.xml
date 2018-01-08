@@ -26,7 +26,6 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.READ_LOGS"/>
 
-
     <!-- add by HJ end -->
     <!-- add by HJ end -->
     <application
@@ -95,6 +94,9 @@
             android:name=".live.LiveActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".live.TestTouchActivity">
+
         </activity>
     </application>
 
