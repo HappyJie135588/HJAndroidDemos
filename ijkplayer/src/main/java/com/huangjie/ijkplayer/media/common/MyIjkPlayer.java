@@ -99,7 +99,7 @@ public class MyIjkPlayer extends FrameLayout {
     private static final int RETRY_TIMES = 5;//重试次数
     private int mCount = 0;//错误次数
     private int duration;//视频长度
-    private static final int AUTO_HIDE_TIME = 50000;//自动隐藏播放控制器时间
+    private static final int AUTO_HIDE_TIME = 6000;//自动隐藏播放控制器时间
     private int initHeight;//记录播放器的高度
     private final String[] sizeStr = new String[]{"适应", "拉伸", "填充", "铺满", "16:9", "4:3"};//画面尺寸
     private GestureDetector mGestureDetector;
@@ -602,7 +602,6 @@ public class MyIjkPlayer extends FrameLayout {
     private DateFormat mDateFormat = new SimpleDateFormat("HH:mm:ss");
 
     public void setUrl(final String url) {
-        this.url = url;
         boolean isMobileConn = NetUtils.isMobileConn(mContext);
         boolean isWifiConn = NetUtils.isWifiConn(mContext);
         Log.d(TAG, "onReceive: 网络状态发生变化 isMobileConn:" + isMobileConn + " isWifiConn:" + isWifiConn);
@@ -1075,6 +1074,10 @@ public class MyIjkPlayer extends FrameLayout {
             //Completion
             mDanmakuView = null;
         }
+        //停止时间更新
+        mHandler.removeMessages(TIME_MESSAGE_WHAT);
+        //停止进度更新
+        mHandler.removeMessages(PRO_MESSAGE_WHAT);
     }
 
     public interface MyIjkPlayerListener {
@@ -1285,7 +1288,7 @@ public class MyIjkPlayer extends FrameLayout {
             if (isMobileConn && !isWifiConn) {
                 //移动数据已连接
                 //判断是否可以用流量播放
-                if (!isMobileNetPlay) {
+                if (!isMobileNetPlay && isVideoPrepared) {
                     pause();
                     mMobileConnDialog = new AlertDialog.Builder(mContext)
                             .setMessage("当前为数据流量是否继续播放")
