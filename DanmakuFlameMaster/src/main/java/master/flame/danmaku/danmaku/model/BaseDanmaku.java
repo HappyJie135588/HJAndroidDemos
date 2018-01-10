@@ -44,7 +44,7 @@ public abstract class BaseDanmaku {
     /**
      * 显示时间(毫秒)
      */
-    private long time;
+    public long time;
 
     /**
      * 偏移时间

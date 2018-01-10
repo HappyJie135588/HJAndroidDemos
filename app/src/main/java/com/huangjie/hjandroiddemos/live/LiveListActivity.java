@@ -50,7 +50,7 @@ public class LiveListActivity extends BaseActivity {
 
     private void initData() {
         liveList = new ArrayList<>();
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath()+"/SONY4K.mp4");
+        File file = new File(Environment.getExternalStorageDirectory()+"/SONY4K.mp4");
         loggerHJ.d(file+"+file.exists()+"+file.exists());
         LiveEntity liveEntityc = new LiveEntity("本地SONY4K.mp4", file.getAbsolutePath());
         LiveEntity liveEntityb = new LiveEntity("新闻", "http://flv106.v1.cn/cloud/20130604/605305.flv");

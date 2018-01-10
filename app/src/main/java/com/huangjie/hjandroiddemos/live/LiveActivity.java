@@ -57,17 +57,17 @@ public class LiveActivity extends BaseActivity {
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
-        loggerHJ.d("onRestart");
-        my_ijk_player.onRestart();
+    protected void onPause() {
+        super.onPause();
+        loggerHJ.d("onPause");
+        my_ijk_player.onPause();
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        loggerHJ.d("onStop");
-        my_ijk_player.onStop();
+    protected void onResume() {
+        super.onResume();
+        loggerHJ.d("onResume");
+        my_ijk_player.onResume();
     }
 
     @Override

@@ -4,11 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <com.huangjie.ijkplayer.media.common.MyIjkPlayer
         android:id="@+id/my_ijk_player"
         android:layout_width="match_parent"
+        app:haveDanma="true"
         android:layout_height="200dp"
         android:layout_gravity="center"/>
 
